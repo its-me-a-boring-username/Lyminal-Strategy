@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ly-bg: #1c1c21;
+  --ly-ink: #f0ebe2;
+  --ly-accent: #a05c28;
+  --ly-accent-rgb: 160,92,40;
+  --ly-accent2: #4a7c8e;
+}
+
+html, body, #root {
+  background: var(--ly-bg);
+  color: var(--ly-ink);
+}
+
+html[data-color-mode="dark"] {
+  color-scheme: dark;
+}

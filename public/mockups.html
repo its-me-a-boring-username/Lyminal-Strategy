@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lyminal Color Mockups</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #111116; font-family: 'Inter', sans-serif; color: #f0ebe2; padding: 40px 32px 120px; }
+
+.page-title { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; color: #444; text-transform: uppercase; margin-bottom: 4px; }
+.page-sub { font-size: 0.9rem; color: #777; margin-bottom: 40px; }
+
+/* palette */
+.palette { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-bottom: 56px; padding: 20px 24px; background: #16161a; border: 1px solid #1e1e24; border-radius: 8px; }
+.swatch { display: flex; align-items: center; gap: 9px; }
+.swatch-dot { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.06); }
+.swatch-info { font-size: 11px; }
+.swatch-name { color: #888; font-weight: 500; display: block; }
+.swatch-hex { color: #3a3a40; font-family: monospace; font-size: 10px; }
+.palette-note { font-size: 11px; color: #444; line-height: 1.55; max-width: 220px; border-left: 2px solid #2a2a30; padding-left: 12px; margin-left: 8px; }
+
+/* option block */
+.option-block { margin-bottom: 80px; }
+.option-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px; }
+.opt-badge { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 14px; border-radius: 999px; border: 1px solid #3a3a40; background: #1a1a20; color: #666; flex-shrink: 0; }
+.opt-name { font-size: 1.1rem; font-weight: 600; color: #d4cfc8; margin-bottom: 3px; }
+.opt-desc { font-size: 0.8rem; color: #555; line-height: 1.6; max-width: 700px; }
+
+/* 2-column screen grid */
+.screens-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* individual screen card */
+.sc { border-radius: 10px; overflow: hidden; border: 1px solid #222228; }
+.sc-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #333; padding: 8px 16px 6px; background: #0e0e12; border-bottom: 1px solid #1a1a1e; }
+
+/* nav */
+.nav { display: flex; }
+.nt { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 13px 6px 10px; font-size: 10px; font-weight: 500; border-bottom: 2.5px solid transparent; letter-spacing: 0.02em; }
+.nt svg { width: 18px; height: 18px; display: block; }
+.nt.on { font-weight: 700; }
+
+/* screen header */
+.hdr { padding: 20px 20px 18px; }
+.hdr-eye { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 6px; }
+.hdr-h { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; line-height: 1.2; margin-bottom: 5px; }
+.hdr-sub { font-size: 11px; line-height: 1.55; }
+
+/* body */
+.body { padding: 16px 18px 18px; }
+.gc { background: white; padding: 12px 14px; margin-bottom: 10px; }
+.gc-sphere { font-size: 9px; text-transform: uppercase; letter-spacing: 0.09em; font-weight: 600; margin-bottom: 4px; }
+.gc-text { font-size: 13px; color: #1c1410; font-family: 'Playfair Display', serif; margin-bottom: 8px; }
+.gc-btns { display: flex; gap: 8px; }
+.gc-btn { font-size: 9px; padding: 5px 12px; border-radius: 5px; font-weight: 600; }
+
+/* chat */
+.chat-hdr { padding: 14px 18px; display: flex; align-items: center; gap: 10px; }
+.chat-pill { font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 4px 11px; border-radius: 999px; flex-shrink: 0; }
+.chat-goal { font-size: 11.5px; flex: 1; line-height: 1.35; }
+.chat-exit { font-size: 9px; padding: 5px 11px; border-radius: 5px; flex-shrink: 0; }
+.chat-body { padding: 14px 18px; min-height: 90px; }
+.msg-a { background: white; border: 1px solid #e8e0d5; border-radius: 9px 9px 9px 2px; padding: 10px 13px; font-size: 11px; color: #1c1410; max-width: 80%; margin-bottom: 10px; line-height: 1.5; }
+.msg-u { border-radius: 9px 9px 2px 9px; padding: 10px 13px; font-size: 11px; color: white; max-width: 72%; margin-left: auto; margin-bottom: 10px; line-height: 1.5; }
+.chat-bar { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid; }
+.chat-field { flex: 1; border-radius: 6px; padding: 8px 12px; font-size: 10px; border: 1px solid; }
+.chat-send { padding: 8px 14px; border-radius: 6px; font-size: 10px; font-weight: 700; color: white; border: none; cursor: pointer; }
+
+/* chart */
+.chart-hdr { padding: 16px 20px; }
+.chart-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.chart-h { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; }
+.chart-exit { font-size: 10px; padding: 6px 13px; border-radius: 6px; font-weight: 700; color: white; border: none; }
+.chart-btns { display: flex; gap: 9px; }
+.chart-btn { font-size: 10px; padding: 6px 13px; border-radius: 6px; font-weight: 600; }
+.chart-canvas { display: flex; align-items: center; justify-content: center; height: 100px; }
+.node { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+.arr { width: 36px; height: 2px; opacity: 0.45; margin: 0 2px; }
+
+/* account */
+.acct-card { background: white; margin: 14px 18px 18px; border-radius: 7px; overflow: hidden; border: 1px solid #e8e0d5; }
+.acct-row { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f5f0eb; }
+.acct-row:last-child { border-bottom: none; }
+.acct-lbl { font-size: 9px; color: #8a7455; margin-bottom: 2px; }
+.acct-val { font-size: 12px; color: #1c1410; }
+.acct-btn { font-size: 9px; padding: 4px 11px; border: 1px solid #e8e0d5; color: #5c4e40; border-radius: 5px; }
+
+hr.divider { border: none; border-top: 1px solid #1a1a20; margin: 0 0 80px; }
+</style>
+</head>
+<body>
+
+<div class="page-title">Lyminal — Color Option Mockups</div>
+<div class="page-sub">5 options × 5 screens at half-page width each</div>
+
+<div class="palette">
+  <div class="swatch"><div class="swatch-dot" style="background:#1c1c21;border-color:#3a3a40;"></div><div class="swatch-info"><span class="swatch-name">Page bg</span><span class="swatch-hex">#1c1c21</span></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:#26262c;"></div><div class="swatch-info"><span class="swatch-name">Lighter bg</span><span class="swatch-hex">#26262c</span></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:#2e2a26;"></div><div class="swatch-info"><span class="swatch-name">Warm charcoal</span><span class="swatch-hex">#2e2a26</span></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:#a05c28;"></div><div class="swatch-info"><span class="swatch-name">Copper</span><span class="swatch-hex">#a05c28</span></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:#c8874a;border-color:#a05c28;"></div><div class="swatch-info"><span class="swatch-name">Light copper ★</span><span class="swatch-hex">#c8874a</span></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:#f0ebe2;"></div><div class="swatch-info"><span class="swatch-name">Cream</span><span class="swatch-hex">#f0ebe2</span></div></div>
+  <div class="swatch"><div class="swatch-dot" style="background:#888690;"></div><div class="swatch-info"><span class="swatch-name">Muted</span><span class="swatch-hex">#888690</span></div></div>
+  <div class="palette-note">★ <strong style="color:#666;">Light copper</strong> — readable on dark tint headers. Spotted in your Option E feedback; now a first-class palette token for eyebrow labels.</div>
+</div>
+
+<!-- SVG icons reused as inline defs -->
+<svg style="display:none">
+  <symbol id="ico-home" viewBox="0 0 20 20" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M7 18v-6h6v6"/></symbol>
+  <symbol id="ico-plan" viewBox="0 0 20 20" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><path d="M7 2v4M13 2v4M3 8h14"/><path d="M7 12h2M7 15h4"/></symbol>
+  <symbol id="ico-prog" viewBox="0 0 20 20" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15l4-5 3 3 3-4 4 4"/><path d="M3 17h14"/></symbol>
+  <symbol id="ico-chart" viewBox="0 0 20 20" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="10" r="2.5"/><circle cx="15" cy="5" r="2.5"/><circle cx="15" cy="15" r="2.5"/><path d="M7.5 10h4M7 8.5l5.5-2M7 11.5l5.5 2"/></symbol>
+  <symbol id="ico-acct" viewBox="0 0 20 20" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3"/><path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5"/></symbol>
+</svg>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     HELPER MACROS via JS-rendered templates
+     ═══════════════════════════════════════════════════════════════════ -->
+<script>
+// nav(tabs, activeid, navBg, navBorder, activeFg, inactiveFg, activeBorder)
+function nav(activeid, navBg, navBorder, activeFg, inactiveFg, activeBorderColor, topBorder) {
+  const tabs = [
+    { id:'home', label:'Home',     ico:'ico-home'  },
+    { id:'plan', label:'Plan',     ico:'ico-plan'  },
+    { id:'prog', label:'Progress', ico:'ico-prog'  },
+    { id:'chart',label:'Chart',    ico:'ico-chart' },
+    { id:'acct', label:'Acct',     ico:'ico-acct'  },
+  ];
+  const tb = topBorder ? `border-top:2px solid ${topBorder};` : '';
+  return `<div class="nav" style="background:${navBg};border-bottom:1px solid ${navBorder};${tb}">` +
+    tabs.map(t => {
+      const on = t.id === activeid;
+      const fg = on ? activeFg : inactiveFg;
+      const bb = on ? `border-bottom-color:${activeBorderColor};` : '';
+      return `<div class="nt ${on?'on':''}" style="color:${fg};${bb}"><svg stroke="${fg}"><use href="#${t.ico}"/></svg>${t.label}</div>`;
+    }).join('') + '</div>';
+}
+
+function hdr(eyeColor, titleColor, subColor, bg, border, eyeText, titleText, subText) {
+  return `<div class="hdr" style="background:${bg};border-bottom:1px solid ${border};">
+    <div class="hdr-eye" style="color:${eyeColor};">${eyeText}</div>
+    <div class="hdr-h" style="color:${titleColor};">${titleText}</div>
+    <div class="hdr-sub" style="color:${subColor};">${subText}</div>
+  </div>`;
+}
+
+function homeBody(bg, sphereColor) {
+  return `<div class="body" style="background:${bg};">
+    <div class="gc" style="border-left:3px solid ${sphereColor};">
+      <div class="gc-sphere" style="color:${sphereColor};">● Career</div>
+      <div class="gc-text">Get a promotion</div>
+      <div class="gc-btns">
+        <div class="gc-btn" style="background:${sphereColor};color:white;">Talk to Lyme</div>
+        <div class="gc-btn" style="border:1px solid #d4c9bb;color:#6e5c4a;">↩ Change</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function chatHdr(bg, border, pillBg, pillBorder, pillFg, goalFg, exitBorder, exitFg) {
+  return `<div class="chat-hdr" style="background:${bg};border-bottom:1px solid ${border};">
+    <div class="chat-pill" style="background:${pillBg};border:1px solid ${pillBorder};color:${pillFg};">Career</div>
+    <div class="chat-goal" style="color:${goalFg};">Get a promotion at my current company</div>
+    <div class="chat-exit" style="border:1px solid ${exitBorder};color:${exitFg};">Exit</div>
+  </div>`;
+}
+
+function chatBody(bg, sphereColor) {
+  return `<div class="chat-body" style="background:${bg};">
+    <div class="msg-a">What does your manager say about what it would take to get promoted?</div>
+    <div class="msg-u" style="background:${sphereColor};">She hasn't given me clear criteria yet.</div>
+  </div>
+  <div class="chat-bar" style="background:white;border-color:#c4b8a8;">
+    <div class="chat-field" style="background:#faf8f5;border-color:#c4b8a8;color:#999;">Type a message…</div>
+    <div class="chat-send" style="background:${sphereColor};">Send</div>
+  </div>`;
+}
+
+function planBody(bg, sphereColor) {
+  return `<div class="body" style="background:${bg};">
+    <div style="background:#26262c;border:1px solid #3a3a40;border-left:3px solid ${sphereColor};padding:11px 14px;border-radius:0 5px 5px 0;">
+      <div style="font-size:9px;color:${sphereColor};font-weight:700;text-transform:uppercase;letter-spacing:0.09em;margin-bottom:4px;">● Career</div>
+      <div style="font-size:13px;color:#f0ebe2;font-family:'Playfair Display',serif;">Get a promotion</div>
+    </div>
+  </div>`;
+}
+
+function acctBody(bg) {
+  return `<div style="background:${bg};padding-bottom:4px;">
+    <div class="acct-card">
+      <div class="acct-row"><div><div class="acct-lbl">Email address</div><div class="acct-val">you@example.com</div></div><div class="acct-btn">Change</div></div>
+      <div class="acct-row"><div><div class="acct-lbl">Plan</div><div class="acct-val">Free</div></div><div class="acct-btn" style="background:#a05c28;color:white;border-color:#a05c28;">Upgrade</div></div>
+    </div>
+  </div>`;
+}
+
+function chartHdr(bg, border, titleFg, editBg, editFg, editBorder, redoBg, redoFg, redoBorder, exitBg) {
+  return `<div class="chart-hdr" style="background:${bg};border-bottom:1px solid ${border};">
+    <div class="chart-row1">
+      <div class="chart-h" style="color:${titleFg};">Your Goal Chart</div>
+      <div class="chart-exit" style="background:${exitBg};">Exit chart →</div>
+    </div>
+    <div class="chart-btns">
+      <div class="chart-btn" style="background:${editBg};color:${editFg};border:1px solid ${editBorder};">← Edit</div>
+      <div class="chart-btn" style="background:${redoBg};color:${redoFg};border:1px solid ${redoBorder};">↺ Redo</div>
+    </div>
+  </div>`;
+}
+
+function chartCanvas(bg) {
+  const sc = '#4a7a72', tc = '#b5472a';
+  return `<div class="chart-canvas" style="background:${bg};">
+    <div class="node" style="background:${sc};color:white;">C</div>
+    <div class="arr" style="background:${sc};"></div>
+    <div class="node" style="background:white;border:2.5px solid ${tc};color:${tc};">H</div>
+    <div class="arr" style="background:${tc};"></div>
+    <div class="node" style="background:#8a5a44;color:white;">F</div>
+  </div>`;
+}
+
+// Render an option block
+function renderOption(badge, name, desc, screens) {
+  const cards = screens.map(s =>
+    `<div class="sc"><div class="sc-label">${s.label}</div>${s.html}</div>`
+  ).join('');
+  document.write(`
+    <div class="option-block">
+      <div class="option-header">
+        <div class="opt-badge">${badge}</div>
+        <div><div class="opt-name">${name}</div><div class="opt-desc">${desc}</div></div>
+      </div>
+      <div class="screens-grid">${cards}</div>
+    </div>
+    <hr class="divider">
+  `);
+}
+
+const SC = '#4a7a72'; // sphere colour used throughout
+
+// ─── OPTION A: Page lightens, nav stays dark ───────────────────────────────
+renderOption('Option A', 'Page lightens, nav stays dark',
+  'Nav keeps the dark <code>#1c1c21</code>. The page body behind cards shifts to <code>#26262c</code> — marginally lighter — so the nav bar reads as the darkest element and gains visual weight without a colour change. All screen headers → solid copper. Eyebrow labels on copper headers → cream.',
+  [
+    { label: 'Home', html:
+        nav('home','#1c1c21','#3a3a40','#a05c28','#504848','#a05c28') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Active Goals','What you\'re working on','Select a goal to talk with Lyme, or add items yourself.') +
+        homeBody('#26262c', SC) },
+    { label: 'Chat', html:
+        chatHdr('#a05c28','rgba(255,255,255,0.1)',`rgba(74,122,114,0.2)`,`rgba(74,122,114,0.45)`,'#7ecfc4','#f0ebe2','rgba(255,255,255,0.3)','rgba(255,255,255,0.8)') +
+        chatBody('#26262c', SC) },
+    { label: 'Plan', html:
+        nav('plan','#1c1c21','#3a3a40','#a05c28','#504848','#a05c28') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Plan','Progress, one step at a time.','Forward tasks, schedule reminders, find resources.') +
+        planBody('#26262c', SC) },
+    { label: 'Account', html:
+        nav('acct','#1c1c21','#3a3a40','#a05c28','#504848','#a05c28') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Account','Settings','Manage your profile, billing, and preferences.') +
+        acctBody('#26262c') },
+    { label: 'Chart', html:
+        chartHdr('#a05c28','rgba(255,255,255,0.1)','#f0ebe2','rgba(255,255,255,0.15)','white','rgba(255,255,255,0.3)','rgba(255,255,255,0.15)','white','rgba(255,255,255,0.3)','#4a7a72') +
+        chartCanvas('#faf8f5') },
+  ]
+);
+
+// ─── OPTION B: Warm charcoal nav + copper top-border ──────────────────────
+renderOption('Option B', 'Warm charcoal nav + copper accent strip',
+  'Nav <code>#2e2a26</code> — a warm dark tone, visibly different from both the page background and white, without going light. A 2px copper top-border gives the nav its own identity and ties it to the accent. All screen headers → solid copper.',
+  [
+    { label: 'Home', html:
+        nav('home','#2e2a26','#3a3a40','#a05c28','#6e5c4a','#a05c28','#a05c28') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Active Goals','What you\'re working on','Select a goal to talk with Lyme, or add items yourself.') +
+        homeBody('#1c1c21', SC) },
+    { label: 'Chat', html:
+        chatHdr('#a05c28','rgba(255,255,255,0.1)',`rgba(74,122,114,0.2)`,`rgba(74,122,114,0.45)`,'#7ecfc4','#f0ebe2','rgba(255,255,255,0.3)','rgba(255,255,255,0.8)') +
+        chatBody('#1c1c21', SC) },
+    { label: 'Plan', html:
+        nav('plan','#2e2a26','#3a3a40','#a05c28','#6e5c4a','#a05c28','#a05c28') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Plan','Progress, one step at a time.','Forward tasks, schedule reminders, find resources.') +
+        planBody('#1c1c21', SC) },
+    { label: 'Account', html:
+        nav('acct','#2e2a26','#3a3a40','#a05c28','#6e5c4a','#a05c28','#a05c28') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Account','Settings','Manage your profile, billing, and preferences.') +
+        acctBody('#1c1c21') },
+    { label: 'Chart', html:
+        chartHdr('#a05c28','rgba(255,255,255,0.1)','#f0ebe2','rgba(255,255,255,0.15)','white','rgba(255,255,255,0.3)','rgba(255,255,255,0.15)','white','rgba(255,255,255,0.3)','#4a7a72') +
+        chartCanvas('#faf8f5') },
+  ]
+);
+
+// ─── OPTION C: Warm cream nav ──────────────────────────────────────────────
+renderOption('Option C', 'Warm cream nav',
+  'Nav <code>#f0ebe2</code> — the same cream used for body text on dark, repurposed as the nav surface. Creates maximum contrast against the dark page. Inactive tabs use warm muted <code>#8a7455</code>. Screen headers → solid copper.',
+  [
+    { label: 'Home', html:
+        nav('home','#f0ebe2','#d4c9bb','#a05c28','#8a7455','#a05c28') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Active Goals','What you\'re working on','Select a goal to talk with Lyme, or add items yourself.') +
+        homeBody('#1c1c21', SC) },
+    { label: 'Chat', html:
+        chatHdr('#a05c28','rgba(255,255,255,0.1)',`rgba(74,122,114,0.2)`,`rgba(74,122,114,0.45)`,'#7ecfc4','#f0ebe2','rgba(255,255,255,0.3)','rgba(255,255,255,0.8)') +
+        chatBody('#1c1c21', SC) },
+    { label: 'Plan', html:
+        nav('plan','#f0ebe2','#d4c9bb','#a05c28','#8a7455','#a05c28') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Plan','Progress, one step at a time.','Forward tasks, schedule reminders, find resources.') +
+        planBody('#1c1c21', SC) },
+    { label: 'Account', html:
+        nav('acct','#f0ebe2','#d4c9bb','#a05c28','#8a7455','#a05c28') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Account','Settings','Manage your profile, billing, and preferences.') +
+        acctBody('#1c1c21') },
+    { label: 'Chart', html:
+        chartHdr('#a05c28','rgba(255,255,255,0.1)','#f0ebe2','rgba(255,255,255,0.15)','white','rgba(255,255,255,0.3)','rgba(255,255,255,0.15)','white','rgba(255,255,255,0.3)','#4a7a72') +
+        chartCanvas('#faf8f5') },
+  ]
+);
+
+// ─── OPTION D: Copper nav ──────────────────────────────────────────────────
+renderOption('Option D', 'Copper nav — fully branded',
+  'Nav <code>#a05c28</code> copper. Active tab = cream + white underline indicator. Inactive = <code>rgba(240,235,226,0.4)</code>. Headers also copper — nav and header form one unified copper band at the top of each screen. Boldest, most branded feel.',
+  [
+    { label: 'Home', html:
+        nav('home','#a05c28','rgba(0,0,0,0.18)','#f0ebe2','rgba(240,235,226,0.4)','rgba(255,255,255,0.8)') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Active Goals','What you\'re working on','Select a goal to talk with Lyme, or add items yourself.') +
+        homeBody('#1c1c21', SC) },
+    { label: 'Chat', html:
+        chatHdr('#a05c28','rgba(255,255,255,0.1)',`rgba(74,122,114,0.2)`,`rgba(74,122,114,0.45)`,'#7ecfc4','#f0ebe2','rgba(255,255,255,0.3)','rgba(255,255,255,0.8)') +
+        chatBody('#1c1c21', SC) },
+    { label: 'Plan', html:
+        nav('plan','#a05c28','rgba(0,0,0,0.18)','#f0ebe2','rgba(240,235,226,0.4)','rgba(255,255,255,0.8)') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Plan','Progress, one step at a time.','Forward tasks, schedule reminders, find resources.') +
+        planBody('#1c1c21', SC) },
+    { label: 'Account', html:
+        nav('acct','#a05c28','rgba(0,0,0,0.18)','#f0ebe2','rgba(240,235,226,0.4)','rgba(255,255,255,0.8)') +
+        hdr('rgba(255,255,255,0.7)','#f0ebe2','rgba(255,255,255,0.6)','#a05c28','rgba(255,255,255,0.1)','Your Account','Settings','Manage your profile, billing, and preferences.') +
+        acctBody('#1c1c21') },
+    { label: 'Chart', html:
+        chartHdr('#a05c28','rgba(255,255,255,0.1)','#f0ebe2','rgba(255,255,255,0.15)','white','rgba(255,255,255,0.3)','rgba(255,255,255,0.15)','white','rgba(255,255,255,0.3)','#4a7a72') +
+        chartCanvas('#faf8f5') },
+  ]
+);
+
+// ─── OPTION E: Fix text legibility only ────────────────────────────────────
+renderOption('Option E', 'Fix legibility only — nav and headers untouched',
+  'No structural colour changes. Nav stays dark (invisible against page — the current problem). Headers keep sphere-colour tints. The only fixes: eyebrow labels now use light copper <code>#c8874a</code> (readable on dark tints), chat goal text → cream, Exit button → readable. Inactive nav tabs brightened slightly to <code>#666</code> so they are at least visible.',
+  [
+    { label: 'Home', html:
+        nav('home','#1c1c21','#3a3a40','#a05c28','#666','#a05c28') +
+        hdr('#c8874a','#f0ebe2','#888690',`rgba(74,122,114,0.09)`,`rgba(74,122,114,0.14)`,'Your Active Goals','What you\'re working on','Select a goal to talk with Lyme, or add items yourself.') +
+        homeBody('#1c1c21', SC) },
+    { label: 'Chat', html:
+        chatHdr(`rgba(74,122,114,0.09)`,`rgba(74,122,114,0.14)`,`rgba(74,122,114,0.15)`,`rgba(74,122,114,0.3)`,'#4a7a72','#f0ebe2','rgba(255,255,255,0.2)','rgba(255,255,255,0.7)') +
+        chatBody('#1c1c21', SC) },
+    { label: 'Plan', html:
+        nav('plan','#1c1c21','#3a3a40','#a05c28','#666','#a05c28') +
+        hdr('#c8874a','#f0ebe2','#888690','rgba(160,92,40,0.10)','rgba(160,92,40,0.18)','Your Plan','Progress, one step at a time.','Forward tasks, schedule reminders, find resources.') +
+        planBody('#1c1c21', SC) },
+    { label: 'Account', html:
+        nav('acct','#1c1c21','#3a3a40','#a05c28','#666','#a05c28') +
+        hdr('#c8874a','#f0ebe2','#888690','rgba(160,92,40,0.10)','rgba(160,92,40,0.18)','Your Account','Settings','Manage your profile, billing, and preferences.') +
+        acctBody('#1c1c21') },
+    { label: 'Chart', html:
+        chartHdr('#1c1c21','#3a3a40','#f0ebe2','#a05c28','white','transparent','rgba(160,92,40,0.10)','#a05c28','rgba(160,92,40,0.35)','#4a7a72') +
+        chartCanvas('#faf8f5') },
+  ]
+);
+</script>
+
+<!-- ═══ PILL DESIGN MOCKUP ═══════════════════════════════════════════════════ -->
+<div class="option-block">
+  <div class="option-header">
+    <div class="opt-badge">Pill Design</div>
+    <div>
+      <div class="opt-name">Plan tab — filter pill treatment</div>
+      <div class="opt-desc">All pills have a solid fill. <strong style="color:#d4cfc8">Active</strong> = medium-saturation fill (TBORDER) + dark border. <strong style="color:#d4cfc8">Inactive</strong> = very light fill (TBG) + soft border. No pill is ever transparent or outlined-only.</div>
+    </div>
+  </div>
+
+  <!-- Before / After comparison -->
+  <div class="screens-grid" style="margin-bottom:20px;">
+    <div class="sc">
+      <div class="sc-label">Before — inactive pills are transparent/outlined</div>
+      <div style="background:#26262c;padding:14px 18px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <div style="font-size:11px;font-weight:600;padding:6px 14px;border-radius:999px;background:#f5f2ee;color:#6e5c4a;border:2px solid #6e5c4a;letter-spacing:0.06em;text-transform:uppercase;">All</div>
+          <div style="font-size:11px;font-weight:600;padding:6px 14px;border-radius:999px;background:transparent;color:#8a5a44;border:1.5px solid #d4a890;letter-spacing:0.06em;text-transform:uppercase;">Forward</div>
+          <div style="font-size:11px;font-weight:600;padding:6px 14px;border-radius:999px;background:transparent;color:#4a7a72;border:1.5px solid #9fd4c4;letter-spacing:0.06em;text-transform:uppercase;">Schedule</div>
+          <div style="font-size:11px;font-weight:600;padding:6px 14px;border-radius:999px;background:transparent;color:#5c6f9b;border:1.5px solid #b0bcd8;letter-spacing:0.06em;text-transform:uppercase;">Find</div>
+        </div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">After — inactive = colored fill + dark text; active = dark + colored text</div>
+      <div style="background:#26262c;padding:14px 18px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <div style="font-size:11px;font-weight:600;padding:6px 14px;border-radius:999px;background:transparent;color:#6e5c4a;border:2px solid #6e5c4a;letter-spacing:0.06em;text-transform:uppercase;">All</div>
+          <div style="font-size:11px;font-weight:600;padding:6px 14px;border-radius:999px;background:#d4a890;color:#1c1410;border:1.5px solid #d4a890;letter-spacing:0.06em;text-transform:uppercase;">Forward</div>
+          <div style="font-size:11px;font-weight:600;padding:6px 14px;border-radius:999px;background:#9fd4c4;color:#1c1410;border:1.5px solid #9fd4c4;letter-spacing:0.06em;text-transform:uppercase;">Schedule</div>
+          <div style="font-size:11px;font-weight:600;padding:6px 14px;border-radius:999px;background:#b0bcd8;color:#1c1410;border:1.5px solid #b0bcd8;letter-spacing:0.06em;text-transform:uppercase;">Find</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Each active state -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+    <div class="sc">
+      <div class="sc-label">All selected (default)</div>
+      <div style="background:#26262c;padding:12px 14px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:transparent;color:#6e5c4a;border:2px solid #6e5c4a;letter-spacing:0.05em;text-transform:uppercase;">All</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#d4a890;color:#1c1010;border:1.5px solid #d4a890;letter-spacing:0.05em;text-transform:uppercase;">Fwd</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#9fd4c4;color:#1c1010;border:1.5px solid #9fd4c4;letter-spacing:0.05em;text-transform:uppercase;">Sched</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#b0bcd8;color:#1c1010;border:1.5px solid #b0bcd8;letter-spacing:0.05em;text-transform:uppercase;">Find</div>
+        </div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Forward selected</div>
+      <div style="background:#26262c;padding:12px 14px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#d4c9bb;color:#1c1010;border:1.5px solid #d4c9bb;letter-spacing:0.05em;text-transform:uppercase;">All</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:transparent;color:#8a5a44;border:2px solid #8a5a44;letter-spacing:0.05em;text-transform:uppercase;">Fwd</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#9fd4c4;color:#1c1010;border:1.5px solid #9fd4c4;letter-spacing:0.05em;text-transform:uppercase;">Sched</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#b0bcd8;color:#1c1010;border:1.5px solid #b0bcd8;letter-spacing:0.05em;text-transform:uppercase;">Find</div>
+        </div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Schedule selected</div>
+      <div style="background:#26262c;padding:12px 14px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#d4c9bb;color:#1c1010;border:1.5px solid #d4c9bb;letter-spacing:0.05em;text-transform:uppercase;">All</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#d4a890;color:#1c1010;border:1.5px solid #d4a890;letter-spacing:0.05em;text-transform:uppercase;">Fwd</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:transparent;color:#4a7a72;border:2px solid #4a7a72;letter-spacing:0.05em;text-transform:uppercase;">Sched</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#b0bcd8;color:#1c1010;border:1.5px solid #b0bcd8;letter-spacing:0.05em;text-transform:uppercase;">Find</div>
+        </div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Find selected</div>
+      <div style="background:#26262c;padding:12px 14px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#d4c9bb;color:#1c1010;border:1.5px solid #d4c9bb;letter-spacing:0.05em;text-transform:uppercase;">All</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#d4a890;color:#1c1010;border:1.5px solid #d4a890;letter-spacing:0.05em;text-transform:uppercase;">Fwd</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:#9fd4c4;color:#1c1010;border:1.5px solid #9fd4c4;letter-spacing:0.05em;text-transform:uppercase;">Sched</div>
+          <div style="font-size:10px;font-weight:600;padding:5px 12px;border-radius:999px;background:transparent;color:#5c6f9b;border:2px solid #5c6f9b;letter-spacing:0.05em;text-transform:uppercase;">Find</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider">
+</body>
+</html>
