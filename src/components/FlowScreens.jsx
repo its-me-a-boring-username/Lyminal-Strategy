@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { SphereConnCard } from "./SphereConnCard.jsx";
-import { SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE, SPHERE_COLOR_MAP, BUSINESS_SPHERES, BUSINESS_GOAL_SUGGESTIONS } from "../constants.js";
+import { SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE, SPHERE_COLOR_MAP, BUSINESS_SPHERES, BUSINESS_GOAL_SUGGESTIONS, STARTUP_GOAL_SUGGESTIONS } from "../constants.js";
 import { saveChart } from "../utils/supabase.js";
 import { trackUserEvent } from "../utils/events.js";
 
@@ -32,6 +32,7 @@ export function FlowScreens({
   selectedTheme,
   businessMode,
   businessStage,
+  startupStage,
 }) {
   const COPPER = "#a05c28";
   const accentColor = COPPER;
@@ -198,47 +199,74 @@ export function FlowScreens({
               </div>
               <p className="mb-8" style={{ color: "#f0ebe2", opacity: 0.6 }}>What do you want to achieve in this area? Add as many goals as you like, or skip ahead.</p>
               <div className="border-2 rounded-2xl p-6 mb-6" style={{ borderColor: currentSphere.color + "50", background: "#ffffff" }}>
-                {currentSphere.goals.length > 0 && (
-                  <div className="mb-4 space-y-2">
-                    {currentSphere.goals.map(g => (
-                      <div key={g.id} className="flex items-center justify-between rounded-lg px-4 py-2.5" style={{ background: "#faf8f5", border: "1px solid #e8e0d5" }}>
-                        <span className="text-sm" style={{ color: "#1c1410" }}>{g.text}</span>
-                        <button onClick={() => removeGoal(currentSphere.id, g.id)} className="ml-3 text-xs hover:opacity-70 transition-opacity" style={{ color: "#8a7455" }}>✕</button>
+                {(() => {
+                  const isStartup = businessStage === "startup" && startupStage;
+                  const startupGoals = isStartup ? STARTUP_GOAL_SUGGESTIONS[startupStage]?.[currentSphere.name] : null;
+                  return (
+                    <>
+                      {currentSphere.goals.length > 0 && (
+                        <div className="mb-4">
+                          {isStartup && <p className="text-xs uppercase tracking-wider mb-2 font-semibold" style={{ color: "#8a7455" }}>Core</p>}
+                          <div className="space-y-2">
+                            {currentSphere.goals.map(g => (
+                              <div key={g.id} className="flex items-center justify-between rounded-lg px-4 py-2.5" style={{ background: "#faf8f5", border: "1px solid #e8e0d5" }}>
+                                <span className="text-sm" style={{ color: "#1c1410" }}>{g.text}</span>
+                                <button onClick={() => removeGoal(currentSphere.id, g.id)} className="ml-3 text-xs hover:opacity-70 transition-opacity" style={{ color: "#8a7455" }}>✕</button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        <input
+                          className="flex-1 rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                          placeholder={businessMode ? "e.g. Secure Series A, launch MVP..." : `Add a goal for ${currentSphere.name}...`}
+                          value={newGoal}
+                          onChange={e => setNewGoal(e.target.value)}
+                          onKeyDown={e => { if (e.key === "Enter") addGoal(currentSphere.id, newGoal); }}
+                          style={{ background: "#ffffff", border: "2px solid #e8e0d5", color: "#1c1410" }}
+                        />
+                        <button onClick={() => addGoal(currentSphere.id, newGoal)}
+                          className="text-white font-bold px-4 transition-colors text-sm rounded-xl"
+                          style={{ background: currentSphere.color }}>
+                          Add
+                        </button>
                       </div>
-                    ))}
-                  </div>
-                )}
-                <div className="flex gap-2">
-                  <input
-                    className="flex-1 rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
-                    placeholder={businessMode ? "e.g. Secure Series A, launch MVP..." : `Add a goal for ${currentSphere.name}...`}
-                    value={newGoal}
-                    onChange={e => setNewGoal(e.target.value)}
-                    onKeyDown={e => { if (e.key === "Enter") addGoal(currentSphere.id, newGoal); }}
-                    style={{ background: "#ffffff", border: "2px solid #e8e0d5", color: "#1c1410" }}
-                  />
-                  <button onClick={() => addGoal(currentSphere.id, newGoal)}
-                    className="text-white font-bold px-4 transition-colors text-sm rounded-xl"
-                    style={{ background: currentSphere.color }}>
-                    Add
-                  </button>
-                </div>
-                {(businessMode ? BUSINESS_GOAL_SUGGESTIONS : GOAL_SUGGESTIONS)[currentSphere.name] && (
-                  <div className="mt-4">
-                    <p className="text-xs uppercase tracking-wider mb-2 font-medium" style={{ color: "#8a7455" }}>Suggestions</p>
-                    <div className="flex flex-wrap gap-2">
-                      {(businessMode ? BUSINESS_GOAL_SUGGESTIONS : GOAL_SUGGESTIONS)[currentSphere.name]
-                        .filter(s => !currentSphere.goals.some(g => g.text.toLowerCase() === s.toLowerCase()))
-                        .map(s => (
-                          <button key={s} onClick={() => addGoal(currentSphere.id, s)}
-                            className="px-3 py-1 text-xs transition-colors"
-                            style={{ borderRadius: "2px", border: `1px solid ${currentSphere.color}40`, color: currentSphere.color, background: currentSphere.color + "08" }}>
-                            + {s}
-                          </button>
-                        ))}
-                    </div>
-                  </div>
-                )}
+                      {isStartup && startupGoals?.recommended?.filter(s => !currentSphere.goals.some(g => g.text.toLowerCase() === s.toLowerCase())).length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-xs uppercase tracking-wider mb-2 font-semibold" style={{ color: "#aaa098" }}>Recommended</p>
+                          <div className="flex flex-wrap gap-2">
+                            {startupGoals.recommended
+                              .filter(s => !currentSphere.goals.some(g => g.text.toLowerCase() === s.toLowerCase()))
+                              .map(s => (
+                                <button key={s} onClick={() => addGoal(currentSphere.id, s)}
+                                  className="px-3 py-1 text-xs transition-colors"
+                                  style={{ borderRadius: "2px", border: `1px solid ${currentSphere.color}40`, color: currentSphere.color, background: currentSphere.color + "08" }}>
+                                  + {s}
+                                </button>
+                              ))}
+                          </div>
+                        </div>
+                      )}
+                      {!isStartup && (businessMode ? BUSINESS_GOAL_SUGGESTIONS : GOAL_SUGGESTIONS)[currentSphere.name] && (
+                        <div className="mt-4">
+                          <p className="text-xs uppercase tracking-wider mb-2 font-medium" style={{ color: "#8a7455" }}>Suggestions</p>
+                          <div className="flex flex-wrap gap-2">
+                            {(businessMode ? BUSINESS_GOAL_SUGGESTIONS : GOAL_SUGGESTIONS)[currentSphere.name]
+                              .filter(s => !currentSphere.goals.some(g => g.text.toLowerCase() === s.toLowerCase()))
+                              .map(s => (
+                                <button key={s} onClick={() => addGoal(currentSphere.id, s)}
+                                  className="px-3 py-1 text-xs transition-colors"
+                                  style={{ borderRadius: "2px", border: `1px solid ${currentSphere.color}40`, color: currentSphere.color, background: currentSphere.color + "08" }}>
+                                  + {s}
+                                </button>
+                              ))}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           )}

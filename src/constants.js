@@ -83,6 +83,58 @@ export const BUSINESS_SPHERES = {
   mature:  ["Strategy", "Finance & Compliance", "Operations", "People & Culture", "Innovation", "Risk Management", "Customer & Market"],
 };
 
+export const STARTUP_SPHERES = {
+  bootstrapping: ["Foundations", "Product", "Team", "Go-to-Market", "Finances", "Legal"],
+  preseed:       ["Product", "Team", "Go-to-Market", "Finances", "Legal", "Fundraising"],
+  seed:          ["Product", "Team", "Go-to-Market", "Finances", "Operations", "Fundraising"],
+  seriesa:       ["Product", "Team", "Go-to-Market", "Finances", "Operations", "Fundraising"],
+  seriesb:       ["Product", "Team", "Go-to-Market", "Finances", "Operations", "Strategy", "Fundraising"],
+};
+
+export const STARTUP_GOAL_SUGGESTIONS = {
+  bootstrapping: {
+    "Foundations":  { core: ["Define your mission and core values", "Draft a basic business plan"], recommended: ["Set up core tools and systems"] },
+    "Product":      { core: ["Define the problem you're solving", "Build a prototype or MVP"], recommended: ["Test your MVP with real users"] },
+    "Team":         { core: ["Identify skills your founding team needs", "Search for a co-founder"], recommended: ["Define roles and responsibilities"] },
+    "Go-to-Market": { core: ["Talk to potential customers weekly", "Document your target customer profile"], recommended: ["Identify your early adopter community"] },
+    "Finances":     { core: ["Assess your personal runway", "Identify sources of bootstrap funding"], recommended: ["Explore grants and non-dilutive funding"] },
+    "Legal":        { core: ["Register your business entity", "Protect your intellectual property"], recommended: ["Set up basic contracts and NDAs"] },
+  },
+  preseed: {
+    "Product":      { core: ["Launch a public beta", "Gather structured user feedback"], recommended: ["Define your product roadmap"] },
+    "Team":         { core: ["Define and document equity structure", "Draft founder agreements"], recommended: ["Make your first hire"] },
+    "Go-to-Market": { core: ["Get your first paying customers", "Run weekly user interviews"], recommended: ["Define what a successful customer looks like", "Establish a referral channel"] },
+    "Finances":     { core: ["Define your unit economics", "Model your first 18 months of spend"], recommended: ["Set up bookkeeping", "Define your pricing model"] },
+    "Legal":        { core: ["Complete incorporation and cap table setup", "Ensure IP assignment agreements are signed"], recommended: ["File patents or trademarks", "Draft customer and vendor contracts"] },
+    "Fundraising":  { core: ["Build your pitch deck", "Open first investor conversations"], recommended: ["Identify and research angel investors", "Prepare your financial model"] },
+  },
+  seed: {
+    "Product":      { core: ["Measure and improve user retention", "Define your PMF metrics"], recommended: ["Move from beta to full launch", "Establish a product development cadence"] },
+    "Team":         { core: ["Define your hiring plan", "Make 3–5 key hires"], recommended: ["Build your onboarding process", "Document company values"] },
+    "Go-to-Market": { core: ["Build a repeatable customer acquisition process", "Measure and reduce churn"], recommended: ["Define your ideal customer profile", "Build a sales or outreach process"] },
+    "Finances":     { core: ["Track burn rate and runway monthly", "Set up MRR/ARR tracking"], recommended: ["Monitor unit economics regularly"] },
+    "Operations":   { core: ["Define your key metrics dashboard", "Set up analytics and reporting"], recommended: ["Implement basic project management", "Build customer support infrastructure"] },
+    "Fundraising":  { core: ["Build relationships with seed-stage VCs", "Prepare your metrics story"], recommended: ["Update your pitch deck", "Prepare for a priced round"] },
+  },
+  seriesa: {
+    "Product":      { core: ["Scale your product for a larger user base", "Define a 12-month product roadmap"], recommended: ["Build a systematic feature development process", "Invest in reliability and performance"] },
+    "Team":         { core: ["Hire your first VPs", "Build your management layer"], recommended: ["Establish a structured hiring process", "Build out HR and people operations"] },
+    "Go-to-Market": { core: ["Build a dedicated sales function", "Establish a customer success function"], recommended: ["Launch a second acquisition channel", "Define your expansion revenue strategy"] },
+    "Finances":     { core: ["Track LTV and CAC rigorously", "Establish budgeting and forecasting"], recommended: ["Model your growth and capital needs", "Set up a finance function"] },
+    "Operations":   { core: ["Implement a goal-setting framework", "Build out your data infrastructure"], recommended: ["Establish legal, compliance, and security processes"] },
+    "Fundraising":  { core: ["Develop relationships with top-tier VCs", "Prepare for due diligence"], recommended: ["Build your board of directors", "Engage legal counsel for the raise"] },
+  },
+  seriesb: {
+    "Product":      { core: ["Expand your product line", "Enter new market segments"], recommended: ["Build platform and infrastructure", "Establish a design system"] },
+    "Team":         { core: ["Complete your C-suite", "Scale HR and people operations"], recommended: ["Establish executive team rhythms and reporting"] },
+    "Go-to-Market": { core: ["Expand into new geographies", "Build an enterprise sales motion"], recommended: ["Establish a partner and channel ecosystem"] },
+    "Finances":     { core: ["Define your path to profitability", "Prepare board-level financial reporting"], recommended: ["Model exit scenarios", "Explore debt financing options"] },
+    "Operations":   { core: ["Standardize processes across the company", "Build a data and analytics team"], recommended: ["Implement enterprise governance and compliance"] },
+    "Strategy":     { core: ["Define your long-term competitive moat", "Assess IPO or acquisition readiness"], recommended: ["Evaluate acquisition targets", "Explore new business models"] },
+    "Fundraising":  { core: ["Engage advisors and bankers for late-stage raise"], recommended: ["Develop your investor relations function"] },
+  },
+};
+
 export const BUSINESS_SPHERE_REASONS = {
   "Foundations":            "Core identity, legal, and structural basics everything else depends on",
   "Product Development":    "The core offering that drives all revenue and retention",

@@ -14,7 +14,7 @@ import { GoalPicker } from "./components/GoalPicker.jsx";
 import { PlanScreen } from "./components/PlanScreen.jsx";
 import { DevReset } from "./components/DevReset.jsx";
 import { WelcomeScreen } from "./components/WelcomeScreen.jsx";
-import { BizWelcome, BizSurvey1, BizSurvey2, BizRecommended } from "./components/BizOnboarding.jsx";
+import { BizWelcome, BizSurvey1, BizSurvey2, BizRecommended, BizSurvey3, StartupRecommended } from "./components/BizOnboarding.jsx";
 import { AccountScreen } from "./components/AccountScreen.jsx";
 import { generateChartReport, generateFullReport } from "./utils/pdf.js";
 import { loadChart, makeLocalState, readLocalState, writeLocalState } from "./utils/supabase.js";
@@ -46,6 +46,7 @@ function GoalChart() {
   const [step, setStep] = useState("biz-welcome");
   const [businessMode, setBusinessMode] = useState(null);
   const [businessStage, setBusinessStage] = useState(null);
+  const [startupStage, setStartupStage] = useState(null);
   const [spheres, setSpheres] = useState([]);
   const [newSphere, setNewSphere] = useState("");
   const [connections, setConnections] = useState({});
@@ -204,6 +205,7 @@ function GoalChart() {
     if (localState.checkedItems) setCheckedItems(localState.checkedItems);
     if (localState.businessMode) setBusinessMode(localState.businessMode);
     if (localState.businessStage) setBusinessStage(localState.businessStage);
+    if (localState.startupStage) setStartupStage(localState.startupStage);
   }, []);
 
   useEffect(() => {
@@ -218,6 +220,7 @@ function GoalChart() {
         updatedAt: new Date().toISOString(),
         businessMode,
         businessStage,
+        startupStage,
       }));
     }
   }, [spheres, connections, activeGoals, step, completedGoals, checkedItems, businessMode, businessStage]);
@@ -314,6 +317,8 @@ function GoalChart() {
   if (step === "biz-survey-1") return <BizSurvey1 setStep={setStep} setSpheres={setSpheres} setBusinessMode={setBusinessMode} />;
   if (step === "biz-survey-2") return <BizSurvey2 setStep={setStep} setSpheres={setSpheres} setBusinessStage={setBusinessStage} />;
   if (step === "biz-recommended") return <BizRecommended setStep={setStep} spheres={spheres} setSpheres={setSpheres} businessMode={businessMode} />;
+  if (step === "biz-survey-3") return <BizSurvey3 setStep={setStep} setStartupStage={setStartupStage} setSpheres={setSpheres} />;
+  if (step === "biz-startup-recommended") return <StartupRecommended setStep={setStep} spheres={spheres} setSpheres={setSpheres} startupStage={startupStage} />;
 
   if (step === "welcome") return <WelcomeScreen setStep={setStep} DevReset={BoundDevReset} setAuthPrompt={setAuthPrompt} isMobile={isMobile} />;
 
@@ -355,6 +360,7 @@ function GoalChart() {
         selectedTheme={selectedTheme}
         businessMode={businessMode}
         businessStage={businessStage}
+        startupStage={startupStage}
       />
     );
   }

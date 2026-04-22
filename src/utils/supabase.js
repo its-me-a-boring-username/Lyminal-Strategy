@@ -42,7 +42,7 @@ function serializeCompletedGoals(raw) {
   return [];
 }
 
-export function makeLocalState({ spheres = [], connections = {}, activeGoals = [], step = "welcome", completedGoals = new Set(), checkedItems = {}, updatedAt = null, businessMode = null, businessStage = null }) {
+export function makeLocalState({ spheres = [], connections = {}, activeGoals = [], step = "welcome", completedGoals = new Set(), checkedItems = {}, updatedAt = null, businessMode = null, businessStage = null, startupStage = null }) {
   return {
     spheres,
     connections,
@@ -53,6 +53,7 @@ export function makeLocalState({ spheres = [], connections = {}, activeGoals = [
     updatedAt: updatedAt || new Date().toISOString(),
     businessMode,
     businessStage,
+    startupStage,
   };
 }
 
