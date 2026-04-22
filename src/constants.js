@@ -93,11 +93,11 @@ export const STARTUP_SPHERES = {
 
 export const STARTUP_GOAL_SUGGESTIONS = {
   bootstrapping: {
-    "Foundations":  { core: ["Define your mission and core values", "Draft a basic business plan"], recommended: ["Set up core tools and systems", "Complete a competitive analysis"] },
+    "Foundations":  { core: ["Define your mission and core values", "Draft a basic business plan"], recommended: ["Set up core tools and systems", "Buy your domain and set up business email", "Complete a competitive analysis"] },
     "Product":      { core: ["Define the problem you're solving", "Build a prototype or MVP"], recommended: ["Define your MVP feature scope", "Test your MVP with real users", "Set up a basic staging environment"] },
     "Team":         { core: ["Identify skills your founding team needs", "Search for a co-founder"], recommended: ["Define roles and responsibilities"] },
     "Go-to-Market": { core: ["Talk to potential customers weekly", "Document your target customer profile"], recommended: ["Identify your early adopter community"] },
-    "Finances":     { core: ["Assess your personal runway", "Identify sources of bootstrap funding"], recommended: ["Explore grants and non-dilutive funding"] },
+    "Finances":     { core: ["Assess your personal runway", "Identify your basic operational costs", "Identify sources of bootstrap funding"], recommended: ["Explore grants and non-dilutive funding"] },
     "Legal":        { core: ["Register your business entity", "Protect your intellectual property"], recommended: ["Set up basic contracts and NDAs"] },
   },
   preseed: {
@@ -114,7 +114,7 @@ export const STARTUP_GOAL_SUGGESTIONS = {
     "Go-to-Market": { core: ["Build a repeatable customer acquisition process", "Measure and reduce churn"], recommended: ["Define your ideal customer profile", "Build a sales or outreach process"] },
     "Finances":     { core: ["Track burn rate and runway monthly", "Set up MRR/ARR tracking"], recommended: ["Monitor unit economics regularly"] },
     "Operations":   { core: ["Define your key metrics dashboard", "Set up analytics and reporting"], recommended: ["Implement basic project management", "Build customer support infrastructure"] },
-    "R&D":          { core: ["Establish your evaluation framework", "Document key technical decisions and experiments"], recommended: ["Run structured model or approach comparisons", "Build a test dataset or benchmark suite"] },
+    "R&D":          { core: ["Establish your evaluation framework", "Write a research spec document", "Document key technical decisions and experiments"], recommended: ["Assess R&D timeline and costs", "Run structured model or approach comparisons", "Build a test dataset or benchmark suite"] },
     "Fundraising":  { core: ["Build relationships with seed-stage VCs", "Prepare your metrics story"], recommended: ["Update your pitch deck", "Prepare for a priced round"] },
   },
   seriesa: {
