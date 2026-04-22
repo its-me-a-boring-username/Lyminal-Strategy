@@ -84,7 +84,7 @@ export const BUSINESS_SPHERES = {
 };
 
 export const STARTUP_SPHERES = {
-  bootstrapping: ["Foundations", "Product", "Team", "Go-to-Market", "Finances", "Legal"],
+  bootstrapping: ["Foundations", "Product", "Go-to-Market", "Finances", "Legal"],
   preseed:       ["Product", "Team", "Go-to-Market", "Finances", "Legal", "Fundraising"],
   seed:          ["Product", "Team", "Go-to-Market", "Finances", "Operations", "R&D", "Fundraising"],
   seriesa:       ["Product", "Team", "Go-to-Market", "Finances", "Operations", "R&D", "Fundraising"],
