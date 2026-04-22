@@ -85,7 +85,7 @@ function GoalChart() {
         return;
       }
 
-      const [profile, data] = await Promise.all([
+      const [profile, cloudData] = await Promise.all([
         loadUserProfile(activeSession),
         loadChart(activeSession),
       ]);
@@ -94,13 +94,32 @@ function GoalChart() {
       setAppearance(profile.appearance);
       setSelectedTheme(profile.selectedTheme);
 
-      if (data) {
-        setSpheres(data.spheres);
-        setConnections(data.connections);
-        setActiveGoals(data.activeGoals);
-        setCheckedItems(data.checkedItems);
-        setCompletedGoals(data.completedGoals);
-        if (data.activeGoals.length > 0) setStep("active");
+      if (cloudData) {
+        const localState = readLocalState();
+        const localTime = localState?.updatedAt ? new Date(localState.updatedAt).getTime() : 0;
+        const cloudTime = cloudData.updatedAt ? new Date(cloudData.updatedAt).getTime() : 0;
+
+        if (localTime > cloudTime && localState.spheres?.length > 0) {
+          // Local is newer — save it up to cloud so it isn't lost
+          saveChart(activeSession, {
+            spheres: localState.spheres,
+            connections: localState.connections,
+            activeGoals: localState.activeGoals,
+            checkedItems: localState.checkedItems,
+            completedGoals: localState.completedGoals,
+          });
+        } else {
+          // Cloud is newer — apply it and clear any stale local onboarding state
+          setSpheres(cloudData.spheres);
+          setConnections(cloudData.connections);
+          setActiveGoals(cloudData.activeGoals);
+          setCheckedItems(cloudData.checkedItems);
+          setCompletedGoals(cloudData.completedGoals);
+          setBusinessMode(null);
+          setBusinessStage(null);
+          setStartupStage(null);
+          if (cloudData.activeGoals.length > 0) setStep("active");
+        }
       }
     };
 

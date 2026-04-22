@@ -72,6 +72,7 @@ export function readLocalState() {
       updatedAt: parsed.updatedAt || null,
       businessMode: parsed.businessMode || null,
       businessStage: parsed.businessStage || null,
+      startupStage: parsed.startupStage || null,
     };
   } catch {
     return null;
