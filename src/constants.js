@@ -73,7 +73,7 @@ const SPHERE_COLOR_MAP = {
   "Spirituality":     "#6b5c8a", // soft violet
 };
 
-export { MAP_BG, FONTS, PALETTE, SPHERE_COLOR_MAP };
+export { MAP_BG, FONTS, PALETTE, SPHERE_COLOR_MAP, GOAL_SUGGESTIONS };
 
 export const BUSINESS_SPHERES = {
   team:    ["Goals & OKRs", "Team Health", "Execution", "Stakeholder Alignment", "Learning & Growth"],

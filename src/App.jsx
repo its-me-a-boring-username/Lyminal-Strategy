@@ -461,6 +461,7 @@ function GoalChart() {
           newActionItem={newActionItem}
           setNewActionItem={setNewActionItem}
           isPaid={isPaid}
+          isPro={isPro}
           session={session}
           pdfLoading={pdfLoading}
           setPdfLoading={setPdfLoading}
@@ -532,6 +533,7 @@ function GoalChart() {
           setAuthPrompt={setAuthPrompt}
           isMobile={isMobile}
           isPaid={isPaid}
+          isPro={isPro}
           selectedTheme={selectedTheme}
         />
       </>

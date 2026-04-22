@@ -36,7 +36,7 @@ export function ActiveScreen({
   completedGoals, setCompletedGoals,
   editingAction, setEditingAction,
   newActionItem, setNewActionItem,
-  isPaid, session,
+  isPaid, isPro, session,
   pdfLoading, setPdfLoading,
   spheres, connections, counts, ranked,
   generateFullReport,
@@ -47,9 +47,10 @@ export function ActiveScreen({
   isMobile,
   selectedTheme,
 }) {
-  const allActive = focusRound >= 1 ? activeGoals : activeGoals.slice(0, 1);
+  const allActive = activeGoals;
   const [celebrating, setCelebrating] = React.useState(null);
   const [confirmRemove, setConfirmRemove] = React.useState(null);
+  const [collapsed, setCollapsed] = React.useState({});
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
 
@@ -208,14 +209,20 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               <div key={ag.sphereId} style={{ borderLeft: `3px solid ${isDefault ? ag.sphereColor : "var(--ly-accent)"}`, background: "white" }}>
 
                 {/* B-style card header */}
-                <div style={{ padding: "14px 16px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", background: isDefault ? paleSphereColor(ag.sphereColor) : "rgba(var(--ly-accent-rgb), 0.08)", borderBottom: `1px solid ${isDefault ? paleSphereColorBorder(ag.sphereColor) : "rgba(var(--ly-accent-rgb), 0.15)"}` }}>
+                <div
+                  onClick={() => setCollapsed(prev => ({ ...prev, [ag.goalId]: !prev[ag.goalId] }))}
+                  style={{ padding: "14px 16px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", background: isDefault ? paleSphereColor(ag.sphereColor) : "rgba(var(--ly-accent-rgb), 0.08)", borderBottom: collapsed[ag.goalId] ? "none" : `1px solid ${isDefault ? paleSphereColorBorder(ag.sphereColor) : "rgba(var(--ly-accent-rgb), 0.15)"}`, cursor: "pointer" }}
+                >
                   <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", flex: 1, minWidth: 0 }}>
                     <button
-                      onClick={() => setCompletedGoals(prev => {
-                        const next = new Set(prev);
-                        prev.has(ag.goalId) ? next.delete(ag.goalId) : next.add(ag.goalId);
-                        return next;
-                      })}
+                      onClick={e => {
+                        e.stopPropagation();
+                        setCompletedGoals(prev => {
+                          const next = new Set(prev);
+                          prev.has(ag.goalId) ? next.delete(ag.goalId) : next.add(ag.goalId);
+                          return next;
+                        });
+                      }}
                       style={{ width: "16px", height: "16px", borderRadius: "3px", flexShrink: 0, marginTop: "3px", border: `2px solid ${isDefault ? ag.sphereColor : "var(--ly-accent)"}`, background: completedGoals.has(ag.goalId) ? (isDefault ? ag.sphereColor : "var(--ly-accent)") : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, transition: "all 0.2s" }}
                     >
                       {completedGoals.has(ag.goalId) && <span style={{ color: "white", fontSize: "9px", fontWeight: "bold" }}>✓</span>}
@@ -225,15 +232,20 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                       <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1rem", color: completedGoals.has(ag.goalId) ? "#8a7455" : "#1c1410", margin: 0, lineHeight: 1.3, textDecoration: completedGoals.has(ag.goalId) ? "line-through" : "none" }}>{ag.goalText}</p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => setConfirmRemove(ag)}
-                    style={{ background: "none", border: "none", color: "#8a7455", cursor: "pointer", fontSize: "13px", padding: 0, lineHeight: 1, flexShrink: 0, marginLeft: "8px", marginTop: "2px" }}
-                    title="Remove this goal"
-                  >
-                    ✕
-                  </button>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0, marginLeft: "8px", marginTop: "2px" }}>
+                    <span style={{ fontSize: "10px", color: "#8a7455" }}>{collapsed[ag.goalId] ? "∨" : "∧"}</span>
+                    <button
+                      onClick={e => { e.stopPropagation(); setConfirmRemove(ag); }}
+                      style={{ background: "none", border: "none", color: "#8a7455", cursor: "pointer", fontSize: "13px", padding: 0, lineHeight: 1 }}
+                      title="Remove this goal"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 </div>
 
+                {!collapsed[ag.goalId] && (
+                <>
                 {/* Celebrate / pick new goal — only shown when relevant */}
                 {(celebrating === ag.goalId || completedGoals.has(ag.goalId)) && (
                 <div className="px-5 py-3 border-b" style={{ borderColor: "#f0ebe3" }}>
@@ -376,11 +388,13 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                     ↩ Change
                   </button>
                 </div>
+                </>
+                )}
               </div>
             ))}
 
             {/* Add another goal — paid users under limit */}
-            {isPaid && allActive.length < 5 && (
+            {isPaid && (isPro || allActive.length < 5) && (
               <button
                 onClick={() => setStep("goal-picker")}
                 className="w-full text-left transition-all hover:opacity-90"
@@ -397,7 +411,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               </button>
             )}
 
-            {isPaid && allActive.length >= 5 && (
+            {isPaid && !isPro && allActive.length >= 5 && (
               <p className="text-xs text-center" style={{ color: "#606068", padding: "12px 0" }}>
                 You're tracking 5 goals — the maximum. Complete one before adding another.
               </p>

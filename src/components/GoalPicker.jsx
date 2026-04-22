@@ -24,12 +24,13 @@ export function GoalPicker({
   setAuthPrompt,
   isMobile,
   isPaid,
+  isPro,
   selectedTheme,
 }) {
   const MAX_GOALS_FREE = 1;
   const MAX_GOALS_PAID = 5;
   const atFreeLimit = !isPaid && activeGoals.length >= MAX_GOALS_FREE;
-  const atPaidLimit = activeGoals.length >= MAX_GOALS_PAID;
+  const atPaidLimit = !isPro && activeGoals.length >= MAX_GOALS_PAID;
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
 
