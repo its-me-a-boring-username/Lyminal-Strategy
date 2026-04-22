@@ -206,12 +206,12 @@ Do NOT introduce yourself or explain what you do — that has already been handl
 
           <div className="space-y-4 mb-8">
             {allActive.map((ag) => (
-              <div key={ag.sphereId} style={{ borderLeft: `3px solid ${isDefault ? ag.sphereColor : "var(--ly-accent)"}`, background: "white" }}>
+              <div key={ag.sphereId} style={{ borderLeft: `3px solid ${ag.sphereColor}`, background: "white" }}>
 
                 {/* B-style card header */}
                 <div
                   onClick={() => setCollapsed(prev => ({ ...prev, [ag.goalId]: !prev[ag.goalId] }))}
-                  style={{ padding: "14px 16px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", background: isDefault ? paleSphereColor(ag.sphereColor) : "rgba(var(--ly-accent-rgb), 0.08)", borderBottom: `1px solid ${isDefault ? paleSphereColorBorder(ag.sphereColor) : "rgba(var(--ly-accent-rgb), 0.15)"}`, cursor: "pointer" }}
+                  style={{ padding: "14px 16px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", background: paleSphereColor(ag.sphereColor), borderBottom: `1px solid ${paleSphereColorBorder(ag.sphereColor)}`, cursor: "pointer" }}
                 >
                   <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", flex: 1, minWidth: 0 }}>
                     <button
@@ -223,12 +223,12 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                           return next;
                         });
                       }}
-                      style={{ width: "16px", height: "16px", borderRadius: "3px", flexShrink: 0, marginTop: "3px", border: `2px solid ${isDefault ? ag.sphereColor : "var(--ly-accent)"}`, background: completedGoals.has(ag.goalId) ? (isDefault ? ag.sphereColor : "var(--ly-accent)") : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, transition: "all 0.2s" }}
+                      style={{ width: "16px", height: "16px", borderRadius: "3px", flexShrink: 0, marginTop: "3px", border: `2px solid ${ag.sphereColor}`, background: completedGoals.has(ag.goalId) ? ag.sphereColor : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, transition: "all 0.2s" }}
                     >
                       {completedGoals.has(ag.goalId) && <span style={{ color: "white", fontSize: "9px", fontWeight: "bold" }}>✓</span>}
                     </button>
                     <div style={{ minWidth: 0 }}>
-                      <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: isDefault ? ag.sphereColor : "var(--ly-accent)", fontWeight: 600, fontFamily: "'Inter', sans-serif", display: "block", marginBottom: "3px" }}>● {ag.sphereName}</span>
+                      <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: ag.sphereColor, fontWeight: 600, fontFamily: "'Inter', sans-serif", display: "block", marginBottom: "3px" }}>● {ag.sphereName}</span>
                       <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1rem", color: completedGoals.has(ag.goalId) ? "#8a7455" : "#1c1410", margin: 0, lineHeight: 1.3, textDecoration: completedGoals.has(ag.goalId) ? "line-through" : "none" }}>{ag.goalText}</p>
                     </div>
                   </div>
@@ -262,7 +262,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                         }, 1500);
                       }}
                       className="text-xs font-semibold hover:opacity-80 transition-opacity"
-                      style={{ color: isDefault ? ag.sphereColor : "var(--ly-accent)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      style={{ color: ag.sphereColor, background: "none", border: "none", cursor: "pointer", padding: 0 }}
                     >
                       Pick a new goal →
                     </button>
@@ -288,7 +288,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                               className="flex-shrink-0 mt-0.5"
                             >
                               <div className="w-4 h-4 flex items-center justify-center transition-all"
-                                style={{ borderRadius: "3px", border: isDefault ? `2px solid ${ag.sphereColor}` : "2px solid var(--ly-accent)", background: checked ? (isDefault ? ag.sphereColor : "var(--ly-accent)") : "white" }}>
+                                style={{ borderRadius: "3px", border: `2px solid ${ag.sphereColor}`, background: checked ? ag.sphereColor : "white" }}>
                                 {checked && <span className="text-white" style={{ fontSize: "9px", fontWeight: "bold" }}>✓</span>}
                               </div>
                             </button>
@@ -296,7 +296,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                               <input
                                 autoFocus
                                 className="flex-1 text-xs px-2 py-0.5 outline-none"
-                                style={{ border: isDefault ? `1px solid ${ag.sphereColor}` : "1px solid rgba(var(--ly-accent-rgb), 0.4)", borderRadius: "4px", color: "#4a3828" }}
+                                style={{ border: `1px solid ${ag.sphereColor}`, borderRadius: "4px", color: "#4a3828" }}
                                 value={editingAction.text}
                                 onChange={e => setEditingAction(prev => ({ ...prev, text: e.target.value }))}
                                 onKeyDown={e => {
@@ -356,7 +356,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                       className="text-xs font-semibold transition-all"
                       style={{
                         borderRadius: "6px", padding: "6px 14px",
-                        background: newActionItem.trim() ? (isDefault ? ag.sphereColor : "var(--ly-accent)") : "transparent",
+                        background: newActionItem.trim() ? ag.sphereColor : "transparent",
                         color: newActionItem.trim() ? "white" : "#8a7455",
                         border: newActionItem.trim() ? "none" : "1px solid #d4c9bb",
                       }}
@@ -371,7 +371,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                   <button
                     onClick={() => handleTalkToLyme(ag)}
                     className="flex-1 py-2 text-xs font-semibold hover:opacity-90 transition-opacity"
-                    style={{ background: isDefault ? ag.sphereColor : "var(--ly-accent)", color: "white", letterSpacing: "0.04em", borderRadius: "6px" }}
+                    style={{ background: ag.sphereColor, color: "white", letterSpacing: "0.04em", borderRadius: "6px" }}
                   >
                     Talk to Lyme
                   </button>
