@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { SphereConnCard } from "./SphereConnCard.jsx";
-import { SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE, SPHERE_COLOR_MAP, BUSINESS_SPHERES, BUSINESS_GOAL_SUGGESTIONS, STARTUP_GOAL_SUGGESTIONS } from "../constants.js";
+import { PALETTE, SPHERE_COLOR_MAP, BUSINESS_SPHERES, BUSINESS_GOAL_SUGGESTIONS, STARTUP_GOAL_SUGGESTIONS } from "../constants.js";
 import { saveChart } from "../utils/supabase.js";
 import { trackUserEvent } from "../utils/events.js";
 
@@ -127,7 +127,7 @@ export function FlowScreens({
           <div className="mb-5">
             <p className="text-xs uppercase tracking-wider mb-2 font-medium" style={{ color: "#8a7455" }}>Suggestions</p>
             <div className="flex flex-wrap gap-2">
-              {(businessMode ? BUSINESS_SPHERES[businessStage || "startup"] : SUGGESTED_SPHERES).filter(s => !spheres.some(b => b.name.toLowerCase() === s.toLowerCase())).map(s => (
+              {(BUSINESS_SPHERES[businessStage] || []).filter(s => !spheres.some(b => b.name.toLowerCase() === s.toLowerCase())).map(s => (
                 <button key={s} onClick={() => addSphere(s)} className="px-3 py-1.5 text-xs transition-colors"
                   style={{ borderRadius: "4px", border: "1px solid #d4c9bb", color: "#5c4e40", background: "#faf8f5" }}>
                   + {s}
@@ -248,11 +248,11 @@ export function FlowScreens({
                           </div>
                         </div>
                       )}
-                      {!isStartup && (businessMode ? BUSINESS_GOAL_SUGGESTIONS : GOAL_SUGGESTIONS)[currentSphere.name] && (
+                      {!isStartup && BUSINESS_GOAL_SUGGESTIONS[currentSphere.name] && (
                         <div className="mt-4">
                           <p className="text-xs uppercase tracking-wider mb-2 font-medium" style={{ color: "#8a7455" }}>Suggestions</p>
                           <div className="flex flex-wrap gap-2">
-                            {(businessMode ? BUSINESS_GOAL_SUGGESTIONS : GOAL_SUGGESTIONS)[currentSphere.name]
+                            {BUSINESS_GOAL_SUGGESTIONS[currentSphere.name]
                               .filter(s => !currentSphere.goals.some(g => g.text.toLowerCase() === s.toLowerCase()))
                               .map(s => (
                                 <button key={s} onClick={() => addGoal(currentSphere.id, s)}

@@ -73,7 +73,7 @@ const SPHERE_COLOR_MAP = {
   "Spirituality":     "#6b5c8a", // soft violet
 };
 
-export { MAP_BG, FONTS, SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE, SPHERE_COLOR_MAP };
+export { MAP_BG, FONTS, PALETTE, SPHERE_COLOR_MAP };
 
 export const BUSINESS_SPHERES = {
   team:    ["Goals & OKRs", "Team Health", "Execution", "Stakeholder Alignment", "Learning & Growth"],
@@ -93,7 +93,7 @@ export const STARTUP_SPHERES = {
 
 export const STARTUP_GOAL_SUGGESTIONS = {
   bootstrapping: {
-    "Foundations":  { core: ["Define your mission and core values", "Draft a basic business plan"], recommended: ["Set up core tools and systems", "Map the competitive landscape"] },
+    "Foundations":  { core: ["Define your mission and core values", "Draft a basic business plan"], recommended: ["Set up core tools and systems", "Complete a competitive analysis"] },
     "Product":      { core: ["Define the problem you're solving", "Build a prototype or MVP"], recommended: ["Define your MVP feature scope", "Test your MVP with real users", "Set up a basic staging environment"] },
     "Team":         { core: ["Identify skills your founding team needs", "Search for a co-founder"], recommended: ["Define roles and responsibilities"] },
     "Go-to-Market": { core: ["Talk to potential customers weekly", "Document your target customer profile"], recommended: ["Identify your early adopter community"] },
@@ -103,7 +103,7 @@ export const STARTUP_GOAL_SUGGESTIONS = {
   preseed: {
     "Product":      { core: ["Launch a public beta", "Gather structured user feedback"], recommended: ["Define your product roadmap", "Break down your MVP into shippable milestones"] },
     "Team":         { core: ["Define and document equity structure", "Draft founder agreements"], recommended: ["Make your first hire"] },
-    "Go-to-Market": { core: ["Get your first paying customers", "Run weekly user interviews"], recommended: ["Map the competitive landscape", "Define what a successful customer looks like", "Establish a referral channel"] },
+    "Go-to-Market": { core: ["Get your first paying customers", "Run weekly user interviews"], recommended: ["Complete a competitive analysis", "Define what a successful customer looks like", "Establish a referral channel"] },
     "Finances":     { core: ["Define your unit economics", "Model your first 18 months of spend"], recommended: ["Set up bookkeeping", "Define your pricing model"] },
     "Legal":        { core: ["Complete incorporation and cap table setup", "Ensure IP assignment agreements are signed"], recommended: ["File patents or trademarks", "Draft customer and vendor contracts"] },
     "Fundraising":  { core: ["Build your pitch deck", "Open first investor conversations"], recommended: ["Identify and research angel investors", "Prepare your financial model"] },
