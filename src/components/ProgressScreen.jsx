@@ -133,7 +133,7 @@ function DetailPanel({
   // ── Empty state ──
   if (!activeGoal) {
     return (
-      <div style={{ padding: "32px 0 12px" }}>
+      <div style={{ background: "white", borderLeft: `3px solid ${sphere.color || goalColor}`, padding: "28px 22px 20px" }}>
         <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>
           No goal set for {sphere.name}
         </p>
