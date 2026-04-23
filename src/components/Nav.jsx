@@ -5,7 +5,7 @@ const OCHRE = "var(--ly-accent)";
 const OCHRE_TINT = "rgba(var(--ly-accent-rgb), 0.08)";
 const INACTIVE = "#8a7a68";
 const BORDER = "#3a3a40";
-const BG = "var(--ly-bg)";
+const BG = "#1c1c21";
 
 const Icons = {
   home: (

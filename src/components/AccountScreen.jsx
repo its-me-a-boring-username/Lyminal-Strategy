@@ -98,7 +98,7 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, appearance
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <div className="lg:px-16" style={{ background: isMobile ? "#a05c28" : "rgba(160,92,40,0.12)", borderBottom: isMobile ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(160,92,40,0.2)", padding: "28px 24px 24px" }}>
           <p className="text-xs uppercase tracking-widest" style={{ color: isMobile ? "rgba(255,255,255,0.7)" : "#c8874a", margin: "0 0 6px" }}>Your Account</p>
-          <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.75rem", fontWeight: 600, color: "var(--ly-ink)", margin: "0 0 4px" }}>Settings</h2>
+          <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.75rem", fontWeight: 600, color: isMobile ? "#f0ebe2" : "var(--ly-ink)", margin: "0 0 4px" }}>Settings</h2>
           <p style={{ fontSize: "0.8rem", color: isMobile ? "rgba(255,255,255,0.65)" : "#888690", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter',sans-serif" }}>Manage your profile, billing, and how the app looks and feels.</p>
         </div>
         <div className="px-6 py-8 max-w-4xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">

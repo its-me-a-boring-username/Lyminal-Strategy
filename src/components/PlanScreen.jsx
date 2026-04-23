@@ -945,7 +945,7 @@ export function PlanScreen({
         {/* Plan header */}
         <div className="lg:px-16" style={{ background: isMobile ? "#a05c28" : "rgba(160,92,40,0.12)", borderBottom: isMobile ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(160,92,40,0.2)", padding: "28px 24px 24px" }}>
           <p className="text-xs uppercase tracking-widest" style={{ color: isMobile ? "rgba(255,255,255,0.7)" : "#c8874a", margin: "0 0 4px" }}>Your Plan</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "var(--ly-ink)", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: isMobile ? "#f0ebe2" : "var(--ly-ink)", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
           <p style={{ fontSize: "0.8rem", color: isMobile ? "rgba(255,255,255,0.65)" : MUTED, fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Forward tasks, schedule reminders, send messages, or search for resources.</p>
         </div>
 
