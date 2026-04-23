@@ -5,20 +5,8 @@ import { postJson } from "../utils/api.js";
 import { trackUserEvent } from "../utils/events.js";
 import { FONTS } from "../constants.js";
 
-const THEMES_LIST = [
-  // display c1/c2 are circle preview colors; --ly-accent values in theme.js are the deepened UI colors
-  { key: "warm_earth",       label: "Warm earth",       multi: true,  c1: "#b5472a", c2: "#4a7a72" },
-  { key: "terracotta_sage",  label: "Terracotta",       multi: true,  c1: "#b5614a", c2: "#6a9870" },
-  { key: "plum_teal",        label: "Plum & teal",      multi: true,  c1: "#9050a0", c2: "#207878" },
-  { key: "blush_eucalyptus", label: "Blush",            multi: true,  c1: "#b84060", c2: "#4a8870" },
-  { key: "forest",           label: "Forest",           multi: false, c1: "#256035" },
-  { key: "violet",           label: "Violet",           multi: false, c1: "#5010a0" },
-  { key: "rose",             label: "Rose",             multi: false, c1: "#a0102a" },
-  { key: "ocean",            label: "Ocean",            multi: false, c1: "#0848a0" },
-  { key: "ink",              label: "Ink",              multi: false, c1: "#0a0a0a" },
-];
 
-export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTheme, setSelectedTheme, appearance, setAppearance, isMobile, NavBar, AuthOverlay }) {
+export function AccountScreen({ session, tier, isPaid, setAuthPrompt, appearance, setAppearance, isMobile, NavBar, AuthOverlay }) {
   const [confirmReset, setConfirmReset] = useState(false);
   const [visible, setVisible] = useState(false);
   const [changeOpen, setChangeOpen] = useState(false);
@@ -188,16 +176,16 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
             </div>
           </div>
 
-          <p style={sectionLabel}>Chart Settings & Appearance</p>
+          <p style={sectionLabel}>Chart Settings</p>
           <div style={card}>
             <div style={row(false)}>
               <div>
-                <p style={{ fontSize: "0.875rem", color: "#1c1410", margin: 0, fontFamily: "'Inter',sans-serif" }}>Reset your chart</p>
-                <p style={{ fontSize: "0.68rem", color: "#8a7455", margin: "2px 0 0", fontFamily: "'Inter',sans-serif" }}>Start over with new spheres and goals</p>
+                <p style={{ fontSize: "0.875rem", color: "#1c1410", margin: 0, fontFamily: "’Inter’,sans-serif" }}>Reset your chart</p>
+                <p style={{ fontSize: "0.68rem", color: "#8a7455", margin: "2px 0 0", fontFamily: "’Inter’,sans-serif" }}>Start over with new spheres and goals</p>
               </div>
               {confirmReset ? (
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                  <span style={{ fontSize: "0.75rem", color: "#9b2a2a", fontFamily: "'Inter',sans-serif" }}>Are you sure?</span>
+                  <span style={{ fontSize: "0.75rem", color: "#9b2a2a", fontFamily: "’Inter’,sans-serif" }}>Are you sure?</span>
                   <button style={btn("danger")} onClick={() => { localStorage.removeItem("goalchart_state"); clearChart(session); location.reload(); }}>Yes, reset</button>
                   <button style={btn("default")} onClick={() => setConfirmReset(false)}>Cancel</button>
                 </div>
@@ -206,10 +194,11 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
               )}
             </div>
 
-            <div style={{ padding: "14px 18px", borderBottom: "1px solid #f0e8df" }}>
-              <p style={{ fontSize: "0.68rem", color: "#8a7455", margin: "0 0 10px", fontFamily: "'Inter',sans-serif" }}>Appearance</p>
+            <div style={{ padding: "14px 18px" }}>
+              <p style={{ fontSize: "0.68rem", color: "#8a7455", margin: "0 0 10px", fontFamily: "’Inter’,sans-serif" }}>Appearance</p>
               <div style={{ display: "flex", gap: "8px" }}>
-                {["system", "light", "dark"].map((mode) => (
+                {/* "system" and "light" hidden until light theme is implemented */}
+                {["dark"].map((mode) => (
                   <button
                     key={mode}
                     onClick={() => setAppearance(mode)}
@@ -218,7 +207,7 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
                       padding: "7px 0",
                       fontSize: "12px",
                       cursor: "pointer",
-                      fontFamily: "'Inter',sans-serif",
+                      fontFamily: "’Inter’,sans-serif",
                       fontWeight: appearance === mode ? 600 : 400,
                       background: appearance === mode ? "#1c1410" : "none",
                       color: appearance === mode ? "white" : "#8a7455",
@@ -227,33 +216,6 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
                     }}
                   >
                     {mode.charAt(0).toUpperCase() + mode.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ padding: "14px 18px" }}>
-              <p style={{ fontSize: "0.68rem", color: "#8a7455", margin: "0 0 14px", fontFamily: "’Inter’,sans-serif" }}>Theme</p>
-              {/* Multi-tone themes — 5 columns */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: "10px", marginBottom: "10px" }}>
-                {THEMES_LIST.slice(0, 5).map(t => (
-                  <button key={t.key} onClick={() => setSelectedTheme(t.key)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-                    <div style={{ width: "40px", height: "40px", borderRadius: "50%", border: selectedTheme === t.key ? `3px solid ${t.c1}` : "2px solid #e8e0d5", overflow: "hidden", display: "flex", flexShrink: 0 }}>
-                      {t.multi
-                        ? (<><div style={{ flex: 1, background: t.c1 }} /><div style={{ flex: 1, background: t.c2 }} /></>)
-                        : <div style={{ flex: 1, background: t.c1 }} />
-                      }
-                    </div>
-                    <span style={{ fontSize: "9px", color: selectedTheme === t.key ? t.c1 : "#8a7455", fontWeight: selectedTheme === t.key ? 600 : 400, textAlign: "center", lineHeight: 1.3, fontFamily: "’Inter’,sans-serif" }}>{t.label}</span>
-                  </button>
-                ))}
-              </div>
-              {/* Single-tone themes — 4 columns */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "10px", justifyItems: "center" }}>
-                {THEMES_LIST.slice(5).map(t => (
-                  <button key={t.key} onClick={() => setSelectedTheme(t.key)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-                    <div style={{ width: "40px", height: "40px", borderRadius: "50%", border: selectedTheme === t.key ? `3px solid ${t.c1}` : "2px solid #e8e0d5", background: t.c1, flexShrink: 0 }} />
-                    <span style={{ fontSize: "9px", color: selectedTheme === t.key ? t.c1 : "#8a7455", fontWeight: selectedTheme === t.key ? 600 : 400, textAlign: "center", lineHeight: 1.3, fontFamily: "’Inter’,sans-serif" }}>{t.label}</span>
                   </button>
                 ))}
               </div>
