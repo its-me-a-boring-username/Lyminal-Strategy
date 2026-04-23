@@ -37,12 +37,12 @@ const TC     = { forward: "#8a5a44", schedule: "#4a7a72", find: "#5c6f9b", none:
 const TBG    = { forward: "#f7f0ec", schedule: "#edf4f1", find: "#eef0f6", none: "#f5f2ee" };
 const TBORDER = { forward: "#d4a890", schedule: "#9fd4c4", find: "#b0bcd8", none: "#d4c9bb" };
 
-const BG = "#1c1c21";
+const BG = "var(--ly-bg)";
 const COPPER = "#a05c28";
 const CREAM = "#f0ebe2";
 const MUTED = "#888690";
-const CARD_DARK = "#26262c";
-const BORDER_DARK = "#3a3a40";
+const CARD_DARK = "var(--ly-surface)";
+const BORDER_DARK = "var(--ly-border-mid)";
 
 // ── Per-goal accent color helper ─────────────────────────────────────────────
 function hcForGoal(g) {
@@ -902,7 +902,7 @@ export function PlanScreen({
           <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />
           <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16" style={{ textAlign: "center", paddingTop: "60px" }}>
-            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: CREAM, margin: "0 0 8px" }}>No active goals yet</p>
+            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "var(--ly-ink)", margin: "0 0 8px" }}>No active goals yet</p>
             <p style={{ fontSize: "13px", color: MUTED, fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>Add a goal first to start planning.</p>
             <button onClick={() => setStep("goal-picker")} style={{ background: COPPER, color: CREAM, fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
               ADD A GOAL →
@@ -930,7 +930,7 @@ export function PlanScreen({
         />
       )}
 
-    <div className="min-h-screen lg:flex" style={{ background: isMobile ? "#26262c" : BG, fontFamily: "'Inter', sans-serif" }}>
+    <div className="min-h-screen lg:flex" style={{ background: BG, fontFamily: "'Inter', sans-serif" }}>
       <style>{FONTS}</style>
 
       {/* Left design strip — full height, desktop only */}
@@ -945,7 +945,7 @@ export function PlanScreen({
         {/* Plan header */}
         <div className="lg:px-16" style={{ background: isMobile ? "#a05c28" : "rgba(160,92,40,0.12)", borderBottom: isMobile ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(160,92,40,0.2)", padding: "28px 24px 24px" }}>
           <p className="text-xs uppercase tracking-widest" style={{ color: isMobile ? "rgba(255,255,255,0.7)" : "#c8874a", margin: "0 0 4px" }}>Your Plan</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: CREAM, margin: "0 0 4px" }}>Progress, one step at a time.</h2>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "var(--ly-ink)", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
           <p style={{ fontSize: "0.8rem", color: isMobile ? "rgba(255,255,255,0.65)" : MUTED, fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Forward tasks, schedule reminders, send messages, or search for resources.</p>
         </div>
 

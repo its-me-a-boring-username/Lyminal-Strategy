@@ -15,7 +15,8 @@ const THEME_VARS = {
   rose:             { "--ly-bg": "#faf4f5", "--ly-ink": "#220a12", "--ly-accent": "#680818", "--ly-accent-rgb": "104,8,24",   "--ly-accent2": "#c86070" },
   ocean:            { "--ly-bg": "#f4f8fc", "--ly-ink": "#081828", "--ly-accent": "#081838", "--ly-accent-rgb": "8,24,56",    "--ly-accent2": "#4090c8" },
   ink:              { "--ly-bg": "#f5f5f5", "--ly-ink": "#0a0a0a", "--ly-accent": "#0a0a0a", "--ly-accent-rgb": "10,10,10",  "--ly-accent2": "#606060" },
-  strategy:         { "--ly-bg": "#1c1c21", "--ly-ink": "#f0ebe2", "--ly-accent": "#a05c28", "--ly-accent-rgb": "160,92,40", "--ly-accent2": "#4a7c8e" },
+  strategy:       { "--ly-bg": "#1c1c21", "--ly-ink": "#f0ebe2", "--ly-accent": "#a05c28", "--ly-accent-rgb": "160,92,40", "--ly-accent2": "#4a7c8e", "--ly-surface": "rgba(255,255,255,0.05)", "--ly-border-mid": "#3a3a40" },
+  strategy_light: { "--ly-bg": "#ffffff", "--ly-ink": "#1c1410", "--ly-accent": "#a05c28", "--ly-accent-rgb": "160,92,40", "--ly-accent2": "#4a7c8e", "--ly-surface": "#f5f3f0",              "--ly-border-mid": "#d4c9bb" },
 };
 
 function resolveMode(appearance) {
@@ -46,7 +47,8 @@ export function applyTheme({ appearance, selectedTheme }) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
   const mode = resolveMode(appearance);
-  const vars = THEME_VARS[selectedTheme] || THEME_VARS[DEFAULT_THEME.selectedTheme];
+  const themeKey = mode === "light" ? "strategy_light" : "strategy";
+  const vars = THEME_VARS[themeKey];
 
   root.setAttribute("data-appearance", appearance || DEFAULT_THEME.appearance);
   root.setAttribute("data-theme", selectedTheme || DEFAULT_THEME.selectedTheme);

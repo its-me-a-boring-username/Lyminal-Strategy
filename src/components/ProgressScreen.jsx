@@ -449,7 +449,7 @@ export function ProgressScreen({
 
   if (spheres.length === 0) {
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#1c1c21", fontFamily: "'Inter', sans-serif" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "var(--ly-bg)", fontFamily: "'Inter', sans-serif" }}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#a05c28" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
@@ -497,7 +497,7 @@ export function ProgressScreen({
             <p className="text-xs uppercase tracking-widest" style={{ color: "#a05c28", opacity: 0.9, margin: "0 0 4px" }}>
               Your Progress
             </p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#f0ebe2", margin: "0 0 4px" }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "var(--ly-ink)", margin: "0 0 4px" }}>
               How far you've come
             </h2>
             <p style={{ fontSize: "0.8rem", color: "#888690", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Track your progress, add new goals, and get unstuck with Lyme.</p>

@@ -5,7 +5,7 @@ import { saveChart } from "../utils/supabase.js";
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
 
-const BG = "#1c1c21";
+const BG = "var(--ly-bg)";
 const COPPER = "#a05c28";
 const CREAM = "#f0ebe2";
 const MUTED = "#888690";
@@ -88,7 +88,7 @@ export function GoalPicker({
           <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: MUTED, margin: "0 0 6px" }}>
             Add a goal
           </p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: CREAM, margin: "0 0 6px" }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "var(--ly-ink)", margin: "0 0 6px" }}>
             What do you want to work on?
           </h2>
           <p style={{ fontSize: "0.875rem", color: MUTED, fontWeight: 300, margin: "0 0 28px", lineHeight: 1.6 }}>
@@ -114,12 +114,12 @@ export function GoalPicker({
             <button
               onClick={() => setAuthPrompt("upgrade")}
               className="w-full text-left border-2 transition-all hover:opacity-90"
-              style={{ borderColor: "#3a3a40", borderStyle: "dashed", background: "rgba(255,255,255,0.04)" }}
+              style={{ borderColor: "var(--ly-border-mid)", borderStyle: "dashed", background: "var(--ly-surface)" }}
             >
               <div className="px-5 py-4 flex items-center gap-3">
                 <span style={{ fontSize: "1rem" }}>🔒</span>
                 <div className="flex-1">
-                  <p className="text-sm font-medium" style={{ color: CREAM }}>Track a second goal</p>
+                  <p className="text-sm font-medium" style={{ color: "var(--ly-ink)" }}>Track a second goal</p>
                   <p className="text-xs" style={{ color: MUTED }}>Upgrade to track multiple goals at once</p>
                 </div>
                 <span className="text-xs font-semibold" style={{ color: COPPER }}>Upgrade →</span>

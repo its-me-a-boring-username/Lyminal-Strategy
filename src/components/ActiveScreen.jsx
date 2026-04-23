@@ -146,7 +146,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
   };
 
   return (
-    <div className="min-h-screen lg:flex" style={{ background: isMobile ? "#26262c" : "#1c1c21", fontFamily: "'Inter', sans-serif" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "var(--ly-bg)", fontFamily: "'Inter', sans-serif" }}>
       <style>{FONTS}</style>
 
       {/* Remove goal modal */}
@@ -196,7 +196,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
           className="lg:px-16">
           {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />}
           <p className="text-xs uppercase tracking-widest mb-1" style={{ color: isMobile ? "rgba(255,255,255,0.7)" : "#c8874a" }}>Your Active Goals</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#f0ebe2", marginBottom: "6px" }}>What you're working on</h2>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "var(--ly-ink)", marginBottom: "6px" }}>What you're working on</h2>
           <p className="text-sm" style={{ color: "#888690", fontWeight: 300 }}>
             Select a goal to talk through your plan with Lyme, or add action items yourself.
           </p>
@@ -398,12 +398,12 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               <button
                 onClick={() => setStep("goal-picker")}
                 className="w-full text-left transition-all hover:opacity-90"
-                style={{ borderRadius: "8px", border: "1px solid #3a3a40", background: "rgba(255,255,255,0.04)" }}
+                style={{ borderRadius: "8px", border: "1px solid var(--ly-border-mid)", background: "var(--ly-surface)" }}
               >
                 <div className="px-5 py-4 flex items-center gap-3">
                   <span style={{ fontSize: "1rem", color: "var(--ly-accent)" }}>+</span>
                   <div className="flex-1">
-                    <p className="text-sm font-medium" style={{ color: "#f0ebe2" }}>Add another goal</p>
+                    <p className="text-sm font-medium" style={{ color: "var(--ly-ink)" }}>Add another goal</p>
                     <p className="text-xs" style={{ color: "#888690" }}>Track a goal from a different sphere</p>
                   </div>
                   <span className="text-xs font-semibold" style={{ color: "var(--ly-accent)" }}>→</span>
@@ -421,12 +421,12 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               <button
                 onClick={() => setAuthPrompt("upgrade")}
                 className="w-full text-left transition-all hover:opacity-90"
-                style={{ borderRadius: "8px", border: "2px dashed #3a3a40", background: "rgba(255,255,255,0.04)" }}
+                style={{ borderRadius: "8px", border: "2px dashed var(--ly-border-mid)", background: "var(--ly-surface)" }}
               >
                 <div className="px-5 py-4 flex items-center gap-3">
                   <span style={{ fontSize: "1rem" }}>🔒</span>
                   <div className="flex-1">
-                    <p className="text-sm font-medium" style={{ color: "#f0ebe2" }}>Track a second goal</p>
+                    <p className="text-sm font-medium" style={{ color: "var(--ly-ink)" }}>Track a second goal</p>
                     <p className="text-xs" style={{ color: "#888690" }}>Upgrade to track multiple goals at once</p>
                   </div>
                   <span className="text-xs font-semibold" style={{ color: "var(--ly-accent)" }}>Upgrade →</span>
