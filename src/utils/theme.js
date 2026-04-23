@@ -31,7 +31,7 @@ export function loadThemeFromStorage() {
     const parsed = JSON.parse(raw);
     return {
       appearance: ["system", "light", "dark"].includes(parsed?.appearance) ? parsed.appearance : DEFAULT_THEME.appearance,
-      selectedTheme: typeof parsed?.selectedTheme === "string" ? parsed.selectedTheme : DEFAULT_THEME.selectedTheme,
+      selectedTheme: "strategy",
     };
   } catch {
     return { ...DEFAULT_THEME };
