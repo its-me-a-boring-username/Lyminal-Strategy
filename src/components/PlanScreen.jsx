@@ -1013,8 +1013,8 @@ export function PlanScreen({
             const gFiltered    = activeType ? gAllItems.filter(item => item.type === activeType) : gAllItems;
             // Standard accordion: one open at a time (filter only controls visibility, not expand state)
             const isExpanded   = i === selIndex;
-            // Action button (Forward/Schedule) only for those types on the selected goal
-            const gShowBulk    = (activeType === "forward" || activeType === "schedule") && i === selIndex;
+            // Action button (Forward/Schedule/Find) only for those types on the selected goal
+            const gShowBulk    = (activeType === "forward" || activeType === "schedule" || activeType === "find") && i === selIndex;
             const gBulkItems   = gFiltered.filter(item => bulkSel.has(item.id));
             // When filter is active, hide goals that have no matching items entirely
             if (activeType !== null && gFiltered.length === 0) return null;
@@ -1117,22 +1117,6 @@ export function PlanScreen({
                                     )}
                                   </div>
                                 )}
-                                {isFind && activeType === "find" && (
-                                  <div style={{ marginTop: "5px" }}>
-                                    {isPro ? (
-                                      <button onClick={() => (findOpen ? closeFindPanel({ completed: false }) : openFindPanel(g.goalId, item))}
-                                        style={{ fontSize: "10px", fontWeight: 600, color: TC.find, background: "none", border: `1px solid ${TBORDER.find}`, padding: "3px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
-                                        {findOpen ? "Close" : "Ask Lyme"}
-                                      </button>
-                                    ) : (
-                                      <button onClick={() => setAuthPrompt("upgrade")}
-                                        style={{ fontSize: "11px", background: "none", border: "none", cursor: "pointer", padding: 0 }}
-                                        title="Available on the $15/mo plan">
-                                        🔒
-                                      </button>
-                                    )}
-                                  </div>
-                                )}
                               </div>
                               <select value={item.type} onChange={e => retagItem(g.goalId, item.id, e.target.value)}
                                 style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.04em", padding: "5px 10px", border: "none", borderRadius: "4px", background: TBG[item.type] || TBG.none, color: TC[item.type] || TC.none, cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
@@ -1153,9 +1137,18 @@ export function PlanScreen({
                         </button>
                         <span style={{ fontSize: "11px", color: MUTED, flex: 1 }}>{gBulkItems.length} selected</span>
                         {gShowBulk && (
-                          <button onClick={() => openBulkModal(activeType)} disabled={gBulkItems.length === 0}
+                          <button
+                            disabled={gBulkItems.length === 0}
+                            onClick={() => {
+                              if (activeType === "find") {
+                                const first = gBulkItems[0];
+                                if (first) openFindPanel(g.goalId, first);
+                              } else {
+                                openBulkModal(activeType);
+                              }
+                            }}
                             style={{ fontSize: "11px", fontWeight: 600, color: "white", background: gHc, border: "none", padding: "7px 16px", cursor: gBulkItems.length > 0 ? "pointer" : "default", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em", opacity: gBulkItems.length > 0 ? 1 : 0.45 }}>
-                            {activeType === "forward" ? "Forward selected →" : "Schedule selected →"}
+                            {activeType === "forward" ? "Forward selected →" : activeType === "find" ? "Ask Lyme →" : "Schedule selected →"}
                           </button>
                         )}
                       </div>
