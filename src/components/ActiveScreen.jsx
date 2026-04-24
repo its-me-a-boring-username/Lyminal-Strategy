@@ -197,7 +197,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
           {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />}
           <p className="text-xs uppercase tracking-widest mb-1" style={{ color: isMobile ? "rgba(255,255,255,0.7)" : "#c8874a" }}>Your Active Goals</p>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: isMobile ? "#f0ebe2" : "var(--ly-ink)", marginBottom: "6px" }}>What you're working on</h2>
-          <p className="text-sm" style={{ color: "#888690", fontWeight: 300 }}>
+          <p className="text-sm" style={{ color: isMobile ? "rgba(255,255,255,0.65)" : "#888690", fontWeight: 300 }}>
             Select a goal to talk through your plan with Lyme, or add action items yourself.
           </p>
         </div>

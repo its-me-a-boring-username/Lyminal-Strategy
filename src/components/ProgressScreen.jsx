@@ -498,17 +498,17 @@ export function ProgressScreen({
 
           {/* Colored header band — replaces the left strip on mobile, adds color on desktop */}
           <div className="lg:px-16" style={{
-            background: "rgba(160,92,40,0.12)",
-            borderBottom: "1px solid rgba(160,92,40,0.2)",
+            background: isMobile ? "#a05c28" : "rgba(160,92,40,0.12)",
+            borderBottom: isMobile ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(160,92,40,0.2)",
             padding: "28px 24px 24px",
           }}>
-            <p className="text-xs uppercase tracking-widest" style={{ color: "#a05c28", opacity: 0.9, margin: "0 0 4px" }}>
+            <p className="text-xs uppercase tracking-widest" style={{ color: isMobile ? "rgba(255,255,255,0.7)" : "#a05c28", margin: "0 0 4px" }}>
               Your Progress
             </p>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: isMobile ? "#f0ebe2" : "var(--ly-ink)", margin: "0 0 4px" }}>
               How far you've come
             </h2>
-            <p style={{ fontSize: "0.8rem", color: "#888690", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Track your progress, add new goals, and get unstuck with Lyme.</p>
+            <p style={{ fontSize: "0.8rem", color: isMobile ? "rgba(255,255,255,0.65)" : "#888690", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Track your progress, add new goals, and get unstuck with Lyme.</p>
           </div>
 
           {/* Ring carousel — full bleed so rings can slide freely */}
