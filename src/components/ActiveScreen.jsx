@@ -50,7 +50,9 @@ export function ActiveScreen({
   const allActive = activeGoals;
   const [celebrating, setCelebrating] = React.useState(null);
   const [confirmRemove, setConfirmRemove] = React.useState(null);
-  const [collapsed, setCollapsed] = React.useState({});
+  const [collapsed, setCollapsed] = React.useState(
+    () => Object.fromEntries(activeGoals.slice(1).map(ag => [ag.goalId, true]))
+  );
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
 
