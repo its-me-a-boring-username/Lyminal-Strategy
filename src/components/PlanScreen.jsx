@@ -1105,7 +1105,7 @@ export function PlanScreen({
                         return (
                           <div key={item.id}>
                             <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
-                              {activeType !== null && activeType !== "finish" && (
+                              {activeType !== null && activeType !== "finish" && activeType !== "none" && (
                                 <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
                                   style={{ marginTop: "2px", flexShrink: 0, accentColor: gHc }} />
                               )}
@@ -1151,8 +1151,8 @@ export function PlanScreen({
                         );
                       })}
                     </div>
-                    {/* Bulk bar — hidden for ALL and FINISH; visible for all other filter types */}
-                    {activeType !== null && activeType !== "finish" && gFiltered.length > 0 && (
+                    {/* Bulk bar — only for actionable filter types (forward, schedule, find) */}
+                    {activeType !== null && activeType !== "finish" && activeType !== "none" && gFiltered.length > 0 && (
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 18px", background: CARD_DARK, borderTop: `1px solid ${BORDER_DARK}` }}>
                         <button onClick={gBulkItems.length === gFiltered.length ? () => setBulkSel(new Set()) : () => setBulkSel(new Set(gFiltered.map(item => item.id)))}
                           style={{ fontSize: "11px", color: gHc, background: "none", border: `1px solid ${gHc}`, padding: "5px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
