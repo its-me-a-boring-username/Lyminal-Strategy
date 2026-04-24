@@ -923,7 +923,7 @@ export function PlanScreen({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
+          max_tokens: 1800,
           system: `You are Lyme, a warm and focused life coach inside the Lyminal app. Your job is to help someone build a concrete action plan for a specific goal.\n\nContext:\n- Sphere: ${ag.sphereName}\n- Goal: ${ag.goalText}\n\nOpen the conversation with a single, specific, thoughtful question that gets right to the heart of where this person stands with this goal. Do NOT use a generic opener — ask something directly relevant to the goal itself. Do NOT introduce yourself. Just ask your question directly. Keep it concise and warm.`,
           messages: [{ role: "user", content: "Start the conversation." }],
         }),

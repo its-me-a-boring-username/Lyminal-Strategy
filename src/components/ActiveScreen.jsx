@@ -74,7 +74,7 @@ export function ActiveScreen({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
+          max_tokens: 1800,
           system: `You are Lyme, a warm and focused life coach inside the Lyminal app. Your job is to help someone build a concrete action plan for a specific goal.
 
 Context:
