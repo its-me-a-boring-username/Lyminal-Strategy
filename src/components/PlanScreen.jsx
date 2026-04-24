@@ -1016,6 +1016,8 @@ export function PlanScreen({
             // Bulk UI only appears for the currently selected goal
             const gShowBulk    = (activeType === "forward" || activeType === "schedule") && i === selIndex;
             const gBulkItems   = gFiltered.filter(item => bulkSel.has(item.id));
+            // When filter is active, hide goals that have no matching items entirely
+            if (activeType !== null && gFiltered.length === 0) return null;
             return (
               <div key={g.goalId} style={{ marginBottom: "10px", borderLeft: `3px solid ${gHc}`, borderRadius: "0 6px 6px 0", overflow: "hidden" }}>
                 {/* Accordion header row */}
