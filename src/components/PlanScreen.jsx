@@ -1362,7 +1362,7 @@ export function PlanScreen({
                                 {hasSavedFindings && (
                                   <button
                                     onClick={(e) => { e.stopPropagation(); setFactsOpenId(factsOpen ? null : item.id); }}
-                                    style={{ display: "inline-flex", alignItems: "center", gap: "6px", marginTop: "8px", padding: "5px 11px", background: factsOpen ? TC.find : TBG.find, border: `1px solid ${TBORDER.find}`, borderRadius: "4px", cursor: "pointer", fontSize: "11px", fontWeight: 600, color: factsOpen ? "white" : TC.find, fontFamily: "'Inter', sans-serif", transition: "all 0.15s" }}>
+                                    style={{ display: "inline-flex", alignItems: "center", gap: "6px", marginTop: "8px", padding: "5px 11px", background: factsOpen ? TBG.find : TC.find, border: `1px solid ${TBORDER.find}`, borderRadius: "4px", cursor: "pointer", fontSize: "11px", fontWeight: 600, color: factsOpen ? TC.find : "white", fontFamily: "'Inter', sans-serif", transition: "all 0.15s" }}>
                                     <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="5" cy="5" r="3.5"/><path d="M8 8l2.5 2.5"/></svg>
                                     {item.findFacts.length === 1 ? "1 finding saved" : `${item.findFacts.length} findings saved`}
                                     <span style={{ fontSize: "9px", opacity: 0.7 }}>{factsOpen ? "▲" : "▼"}</span>
