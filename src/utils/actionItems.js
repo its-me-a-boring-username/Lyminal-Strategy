@@ -38,6 +38,7 @@ export function normalizeActionItem(item, index = 0) {
   const type = rawType === "none" ? "none" : (["forward", "schedule", "find", "finish"].includes(rawType) ? rawType : inferActionType(text));
 
   return {
+    ...item,   // preserve extra fields (findFacts, schedule, forwardLogs, etc.)
     id: item.id || `legacy_${Date.now()}_${index}`,
     text,
     type,
