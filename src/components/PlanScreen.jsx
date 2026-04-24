@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 import { ACTION_TYPES, normalizeActionItems, buildForwardBody } from "../utils/actionItems.js";
+import { processInline } from "../utils/text.jsx";
 import { trackUserEvent } from "../utils/events.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
@@ -609,7 +610,7 @@ Each finding must be specific and actionable — a name, link, price, recommenda
                 )}
                 {cleaned && (
                   <div style={{ maxWidth: "85%", padding: "10px 14px", borderRadius: isUser ? "12px 12px 2px 12px" : "2px 12px 12px 12px", background: isUser ? TBG.find : "#f7f4f0", border: `1px solid ${isUser ? TBORDER.find : "#e8e0d5"}`, fontSize: "13px", color: "#1c1410", lineHeight: 1.55, whiteSpace: "pre-wrap", fontFamily: "'Inter', sans-serif" }}>
-                    {cleaned}
+                    {processInline(cleaned)}
                   </div>
                 )}
                 {/* Findings card — only on messages that carry findings */}
@@ -622,7 +623,7 @@ Each finding must be specific and actionable — a name, link, price, recommenda
                       {m.findings.map((f, fi) => (
                         <div key={fi} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: fi < m.findings.length - 1 ? "7px" : 0 }}>
                           <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: TC.find, marginTop: "6px", flexShrink: 0 }} />
-                          <p style={{ fontSize: "12px", color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{f}</p>
+                          <p style={{ fontSize: "12px", color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{processInline(f)}</p>
                         </div>
                       ))}
                       {m.closing && <p style={{ fontSize: "11px", color: "#8a7455", margin: "8px 0 0", fontStyle: "italic", fontFamily: "'Inter', sans-serif" }}>{m.closing}</p>}

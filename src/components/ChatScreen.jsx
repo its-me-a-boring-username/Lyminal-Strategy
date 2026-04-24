@@ -3,6 +3,7 @@ import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 import { normalizeActionItems, ACTION_TYPE_DESCRIPTIONS } from "../utils/actionItems.js";
 import { trackUserEvent } from "../utils/events.js";
+import { processInline } from "../utils/text.jsx";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -14,13 +15,6 @@ function hexToRgba(hex, alpha) {
   const b = parseInt(hex.slice(5, 7), 16);
   return `rgba(${r},${g},${b},${alpha})`;
 }
-
-const processBold = (text) => {
-  const parts = text.split(/\*\*([^*]+)\*\*/g);
-  return parts.map((part, i) =>
-    i % 2 === 1 ? <strong key={i} style={{ fontWeight: 600 }}>{part}</strong> : part
-  );
-};
 
 const renderMarkdown = (text) => {
   if (!text) return null;
@@ -35,7 +29,7 @@ const renderMarkdown = (text) => {
       while (i < lines.length) {
         const nm = lines[i].match(/^(\d+)\.\s+(.+)/);
         if (!nm) break;
-        items.push(<li key={i} style={{ marginBottom: "0.35rem" }}>{processBold(nm[2])}</li>);
+        items.push(<li key={i} style={{ marginBottom: "0.35rem" }}>{processInline(nm[2])}</li>);
         i++;
       }
       elements.push(<ol key={`ol-${i}`} style={{ paddingLeft: "1.25rem", margin: "0.5rem 0" }}>{items}</ol>);
@@ -45,7 +39,7 @@ const renderMarkdown = (text) => {
       const items = [];
       while (i < lines.length && lines[i].match(/^[-*]\s+/)) {
         const t = lines[i].replace(/^[-*]\s+/, "");
-        items.push(<li key={i} style={{ marginBottom: "0.35rem" }}>{processBold(t)}</li>);
+        items.push(<li key={i} style={{ marginBottom: "0.35rem" }}>{processInline(t)}</li>);
         i++;
       }
       elements.push(<ul key={`ul-${i}`} style={{ paddingLeft: "1.25rem", margin: "0.5rem 0" }}>{items}</ul>);
@@ -54,7 +48,7 @@ const renderMarkdown = (text) => {
     if (line.trim() === "") {
       elements.push(<div key={i} style={{ height: "0.5rem" }} />);
     } else {
-      elements.push(<p key={i} style={{ margin: "0.25rem 0" }}>{processBold(line)}</p>);
+      elements.push(<p key={i} style={{ margin: "0.25rem 0" }}>{processInline(line)}</p>);
     }
     i++;
   }
