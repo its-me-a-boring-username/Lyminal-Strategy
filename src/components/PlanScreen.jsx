@@ -229,7 +229,7 @@ Search the web if needed and give one clear, useful response. Include specific n
           onKeyDown={e => e.key === "Enter" && !e.shiftKey && ask()}
           disabled={loading}
           placeholder={loading ? "Lyme is searching…" : "Ask Lyme to find something…"}
-          style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "white", outline: "none", opacity: loading ? 0.6 : 1 }}
+          style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "#faf8f5", outline: "none", opacity: loading ? 0.6 : 1 }}
         />
         <button onClick={ask} disabled={loading || !input.trim()}
           style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "#b5472a", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>
@@ -299,10 +299,10 @@ function NewForwardModal({ items, color, onClose, onCommit }) {
               </div>
               <div style={{ display: "grid", gap: "10px" }}>
                 <input value={recipient} onChange={(e) => setRecipient(e.target.value)} placeholder={channel === "sms" ? "Phone number" : "Recipient email"}
-                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />
-                {channel === "email" && <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />}
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box", background: "#faf8f5" }} />
+                {channel === "email" && <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box", background: "#faf8f5" }} />}
                 <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note (optional)" rows={3}
-                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", resize: "none", width: "100%", boxSizing: "border-box" }} />
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", resize: "none", width: "100%", boxSizing: "border-box", background: "#faf8f5" }} />
               </div>
             </div>
             <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", gap: "10px" }}>
@@ -396,8 +396,8 @@ function NewScheduleModal({ items, color, onClose, onCommit, session }) {
               <div style={{ marginBottom: "16px" }}>{items.map((i) => <div key={i.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "7px" }}><div style={{ width: "5px", height: "5px", borderRadius: "50%", background: color, marginTop: "6px", flexShrink: 0 }} /><p style={{ fontSize: "13px", color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{i.text}</p></div>)}</div>
               <div style={{ display: "grid", gap: "10px" }}>
                 <div style={{ display: "flex", gap: "10px" }}>
-                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ flex: 1, border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
-                  <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={{ width: "100px", border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
+                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ flex: 1, border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", background: "#faf8f5" }} />
+                  <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={{ width: "100px", border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", background: "#faf8f5" }} />
                 </div>
                 <div style={{ display: "flex", gap: "8px" }}>{["once", "daily", "weekly"].map((r) => <button key={r} onClick={() => setRepeat(r)} style={{ flex: 1, padding: "8px", fontSize: "12px", cursor: "pointer", fontFamily: "'Inter', sans-serif", fontWeight: repeat === r ? 600 : 400, background: repeat === r ? color : "white", color: repeat === r ? "white" : "#6e5c4a", border: `1px solid ${repeat === r ? color : "#d4c9bb"}` }}>{r.charAt(0).toUpperCase() + r.slice(1)}</button>)}</div>
                 {conflictError && <p style={{ fontSize: "11px", color: "#8a7455", margin: 0 }}>{conflictError}</p>}
@@ -457,7 +457,7 @@ function NewFindPanel({ item, goal, onClose, onSaveFact }) {
       <div style={{ display: "flex", gap: "8px", padding: "10px 18px" }}>
         <input autoFocus value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && ask()} disabled={loading}
           placeholder={loading ? "Lyme is searching..." : "Ask Lyme to find something..."}
-          style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "white", outline: "none", opacity: loading ? 0.6 : 1 }}
+          style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "#faf8f5", outline: "none", opacity: loading ? 0.6 : 1 }}
         />
         <button onClick={ask} disabled={loading || !input.trim()} style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "#b5472a", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>Ask</button>
       </div>
