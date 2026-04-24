@@ -507,7 +507,7 @@ Goal: ${goal.goalText}
 Action items to research:
 ${itemsSummary}
 
-Have a focused conversation. Ask a clarifying question if needed, then search the web and give concrete findings. When you have useful results, end your message with this exact block (and nothing after it):
+Have a focused conversation. Ask a clarifying question if needed, then search the web. Once you have useful results, respond with ONE short sentence (e.g. "Here's what I found:") followed immediately by the findings block — do NOT write a long prose summary first. Use this exact format:
 
 FINDINGS_CONFIRMED
 \`\`\`json
@@ -515,7 +515,13 @@ FINDINGS_CONFIRMED
 \`\`\`
 CLOSING: one-sentence summary of what you found
 
-Each finding must be specific and actionable — a name, link, price, recommendation, or fact. Do not use this format until you have real findings. Do not introduce yourself. Start with one targeted question.`;
+Rules:
+- Each finding must be specific and actionable: a name, URL, price, step, or recommendation. No vague descriptions.
+- Include the full URL for any resource (e.g. https://...).
+- 3–6 findings maximum.
+- Do not write prose headings or sections before the JSON block.
+- Do not use this format until you actually have findings.
+- Do not introduce yourself. Start with one targeted question.`;
 
   useEffect(() => { startConversation(); }, []);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
@@ -526,7 +532,7 @@ Each finding must be specific and actionable — a name, link, price, recommenda
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 900,
+        max_tokens: 1800,
         tools: [{ type: "web_search_20250305", name: "web_search" }],
         system: systemPrompt,
         messages: apiMessages,
