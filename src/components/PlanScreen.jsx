@@ -908,6 +908,7 @@ export function PlanScreen({
   const [bulkSel,     setBulkSel]     = useState(new Set());
   const [modal,         setModal]         = useState(null);
   const [findChatState, setFindChatState] = useState(null); // { goalId, items, goal }
+  const [factsOpenId,   setFactsOpenId]   = useState(null); // mobile: item.id whose findings are expanded
   const [introStep, setIntroStep] = useState(() => localStorage.getItem("lyminal_plan_intro_seen") ? null : 0);
 
   const handleTalkToLyme = async (ag) => {
@@ -1318,53 +1319,102 @@ export function PlanScreen({
                           )}
                         </div>
                       ) : gFiltered.map(item => {
-                        const isDone   = checkedItems[g.goalId]?.has(item.id) || false;
-                        const isBulked = bulkSel.has(item.id);
+                        const isDone          = checkedItems[g.goalId]?.has(item.id) || false;
+                        const isBulked        = bulkSel.has(item.id);
+                        const hasSavedFindings = item.findFacts?.[0]?.findings?.length > 0;
+                        const factsOpen       = isMobile && factsOpenId === item.id;
 
                         return (
                           <div key={item.id}>
-                            <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
-                              {activeType !== null && activeType !== "finish" && activeType !== "none" && (
-                                <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
-                                  style={{ marginTop: "2px", flexShrink: 0, accentColor: gHc }} />
-                              )}
-                              <button onClick={() => toggleCheck(g.goalId, item.id)} style={{
-                                width: "16px", height: "16px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
-                                border: `1.5px solid ${isDone ? gHc : "#d4c9bb"}`, background: isDone ? gHc : "white",
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                cursor: "pointer", padding: 0, transition: "all 0.15s",
-                              }}>
-                                {isDone && <svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" /></svg>}
-                              </button>
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <span style={{ display: "block", fontSize: "13px", lineHeight: 1.5, color: isDone ? "#8a7455" : "#1c1410", textDecoration: isDone ? "line-through" : "none" }}>
-                                  {item.text}
-                                </span>
-                                {(item.schedule || item.forwardLogs?.length || item.findFacts?.length) && (
-                                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "4px" }}>
-                                    {item.schedule && (
-                                      <span style={{ fontSize: "10px", color: "#4a7a72", border: "1px solid #cde3dc", padding: "2px 6px", borderRadius: "999px" }}>
-                                        {item.schedule.status || "scheduled"} {item.schedule.scheduledFor ? new Date(item.schedule.scheduledFor).toLocaleString() : ""}
-                                      </span>
-                                    )}
-                                    {item.forwardLogs?.length > 0 && (
-                                      <span style={{ fontSize: "10px", color: "#8a5a44", border: "1px solid #e8d4ca", padding: "2px 6px", borderRadius: "999px" }}>
-                                        forwarded {item.forwardLogs.length}x
-                                      </span>
-                                    )}
-                                    {item.findFacts?.length > 0 && (
-                                      <span style={{ fontSize: "10px", color: "#5c6f9b", border: "1px solid #d5dcee", padding: "2px 6px", borderRadius: "999px" }}>
-                                        saved facts: {item.findFacts.length}
-                                      </span>
-                                    )}
-                                  </div>
+                            {/* Row wrapper — flex so desktop drawer sits beside item */}
+                            <div style={{ display: "flex", alignItems: "stretch", borderBottom: "1px solid #f0ebe3" }}>
+
+                              {/* Item row */}
+                              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s", flex: 1, minWidth: 0 }}>
+                                {activeType !== null && activeType !== "finish" && activeType !== "none" && (
+                                  <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
+                                    style={{ marginTop: "2px", flexShrink: 0, accentColor: gHc }} />
                                 )}
+                                <button onClick={() => toggleCheck(g.goalId, item.id)} style={{
+                                  width: "16px", height: "16px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
+                                  border: `1.5px solid ${isDone ? gHc : "#d4c9bb"}`, background: isDone ? gHc : "white",
+                                  display: "flex", alignItems: "center", justifyContent: "center",
+                                  cursor: "pointer", padding: 0, transition: "all 0.15s",
+                                }}>
+                                  {isDone && <svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" /></svg>}
+                                </button>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <span style={{ display: "block", fontSize: "13px", lineHeight: 1.5, color: isDone ? "#8a7455" : "#1c1410", textDecoration: isDone ? "line-through" : "none" }}>
+                                    {item.text}
+                                  </span>
+                                  {(item.schedule || item.forwardLogs?.length || hasSavedFindings) && (
+                                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "4px" }}>
+                                      {item.schedule && (
+                                        <span style={{ fontSize: "10px", color: "#4a7a72", border: "1px solid #cde3dc", padding: "2px 6px", borderRadius: "999px" }}>
+                                          {item.schedule.status || "scheduled"} {item.schedule.scheduledFor ? new Date(item.schedule.scheduledFor).toLocaleString() : ""}
+                                        </span>
+                                      )}
+                                      {item.forwardLogs?.length > 0 && (
+                                        <span style={{ fontSize: "10px", color: "#8a5a44", border: "1px solid #e8d4ca", padding: "2px 6px", borderRadius: "999px" }}>
+                                          forwarded {item.forwardLogs.length}x
+                                        </span>
+                                      )}
+                                      {/* Mobile: toggle badge */}
+                                      {isMobile && hasSavedFindings && (
+                                        <button onClick={(e) => { e.stopPropagation(); setFactsOpenId(factsOpenId === item.id ? null : item.id); }}
+                                          style={{ fontSize: "10px", color: TC.find, border: `1px solid ${TBORDER.find}`, padding: "2px 7px", borderRadius: "999px", background: factsOpen ? TBG.find : "white", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+                                          {factsOpen ? "▲" : "▼"} {item.findFacts.length === 1 ? "1 finding" : `${item.findFacts.length} findings`}
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                                <select value={item.type} onChange={e => retagItem(g.goalId, item.id, e.target.value)}
+                                  style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.04em", padding: "5px 10px", border: "none", borderRadius: "4px", background: TBG[item.type] || TBG.none, color: TC[item.type] || TC.none, cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
+                                  {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t === "finish" ? "Finish" : t}</option>)}
+                                </select>
                               </div>
-                              <select value={item.type} onChange={e => retagItem(g.goalId, item.id, e.target.value)}
-                                style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.04em", padding: "5px 10px", border: "none", borderRadius: "4px", background: TBG[item.type] || TBG.none, color: TC[item.type] || TC.none, cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
-                                {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t === "finish" ? "Finish" : t}</option>)}
-                              </select>
+
+                              {/* Desktop: side drawer — always visible when findings saved */}
+                              {!isMobile && hasSavedFindings && (
+                                <div style={{ width: "220px", flexShrink: 0, background: TBG.find, borderLeft: `1px solid ${TBORDER.find}`, padding: "12px 14px", display: "flex", flexDirection: "column", gap: "5px" }}>
+                                  <p style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: TC.find, fontWeight: 600, fontFamily: "'Inter', sans-serif", margin: 0 }}>Findings</p>
+                                  {item.findFacts[0].findings.map((f, fi) => (
+                                    <div key={fi} style={{ display: "flex", gap: "6px", alignItems: "flex-start" }}>
+                                      <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: TC.find, marginTop: "5px", flexShrink: 0 }} />
+                                      <p style={{ fontSize: "11px", color: "#1c1410", margin: 0, lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>{processInline(f)}</p>
+                                    </div>
+                                  ))}
+                                  {item.findFacts[0].closing && (
+                                    <p style={{ fontSize: "10px", color: "#8a7455", fontStyle: "italic", fontFamily: "'Inter', sans-serif", margin: "2px 0 0" }}>{item.findFacts[0].closing}</p>
+                                  )}
+                                  <button onClick={() => openFindChat(g.goalId, [item])}
+                                    style={{ marginTop: "4px", fontSize: "10px", fontWeight: 600, color: TC.find, background: "none", border: `1px solid ${TBORDER.find}`, padding: "4px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "4px", alignSelf: "flex-start" }}>
+                                    Ask again →
+                                  </button>
+                                </div>
+                              )}
                             </div>
+
+                            {/* Mobile: inline expand panel */}
+                            {factsOpen && hasSavedFindings && (
+                              <div style={{ background: TBG.find, borderTop: `1px solid ${TBORDER.find}`, borderBottom: "1px solid #f0ebe3", padding: "12px 18px" }}>
+                                <p style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: TC.find, fontWeight: 600, fontFamily: "'Inter', sans-serif", margin: "0 0 8px" }}>Findings</p>
+                                {item.findFacts[0].findings.map((f, fi) => (
+                                  <div key={fi} style={{ display: "flex", gap: "8px", alignItems: "flex-start", marginBottom: "6px" }}>
+                                    <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: TC.find, marginTop: "5px", flexShrink: 0 }} />
+                                    <p style={{ fontSize: "12px", color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{processInline(f)}</p>
+                                  </div>
+                                ))}
+                                {item.findFacts[0].closing && (
+                                  <p style={{ fontSize: "11px", color: "#8a7455", fontStyle: "italic", fontFamily: "'Inter', sans-serif", margin: "6px 0 0" }}>{item.findFacts[0].closing}</p>
+                                )}
+                                <button onClick={() => openFindChat(g.goalId, [item])}
+                                  style={{ marginTop: "10px", fontSize: "11px", fontWeight: 600, color: TC.find, background: "none", border: `1px solid ${TBORDER.find}`, padding: "5px 12px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "4px" }}>
+                                  Ask Lyme again →
+                                </button>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
