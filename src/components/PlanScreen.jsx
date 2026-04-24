@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 import { ACTION_TYPES, normalizeActionItems, buildForwardBody } from "../utils/actionItems.js";
@@ -472,6 +472,211 @@ function NewFindPanel({ item, goal, onClose, onSaveFact }) {
   );
 }
 
+// ── Find Chat Modal ──────────────────────────────────────────────────────────
+const FINDINGS_RE = /FINDINGS_CONFIRMED\s*```json\s*([\s\S]*?)```\s*CLOSING:\s*(.+)/;
+
+function stripFindingsBlock(text) {
+  return text.replace(/FINDINGS_CONFIRMED[\s\S]*$/m, "").trim();
+}
+
+function parseFindings(text) {
+  const match = FINDINGS_RE.exec(text);
+  if (!match) return null;
+  try {
+    const findings = JSON.parse(match[1].trim());
+    const closing  = match[2].trim();
+    return Array.isArray(findings) ? { findings, closing } : null;
+  } catch { return null; }
+}
+
+function FindChatModal({ items, goal, session, onClose }) {
+  const [messages,        setMessages]        = useState([]);
+  const [input,           setInput]           = useState("");
+  const [loading,         setLoading]         = useState(false);
+  const [pendingFindings, setPendingFindings] = useState(null);
+  const [saved,           setSaved]           = useState(false);
+  const bottomRef = useRef(null);
+
+  const itemsSummary = items.map((it, n) => `${n + 1}. ${it.text}`).join("\n");
+
+  const systemPrompt = `You are Lyme, a research assistant inside the Lyminal app. The user needs help finding information or resources for specific action items related to their goal.
+
+Sphere: ${goal.sphereName}
+Goal: ${goal.goalText}
+Action items to research:
+${itemsSummary}
+
+Have a focused conversation. Ask a clarifying question if needed, then search the web and give concrete findings. When you have useful results, end your message with this exact block (and nothing after it):
+
+FINDINGS_CONFIRMED
+\`\`\`json
+["finding 1", "finding 2", "finding 3"]
+\`\`\`
+CLOSING: one-sentence summary of what you found
+
+Each finding must be specific and actionable — a name, link, price, recommendation, or fact. Do not use this format until you have real findings. Do not introduce yourself. Start with one targeted question.`;
+
+  useEffect(() => { startConversation(); }, []);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
+
+  const callApi = async (apiMessages) => {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 900,
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        system: systemPrompt,
+        messages: apiMessages,
+      }),
+    });
+    const data = await res.json();
+    return data.content?.find(b => b.type === "text")?.text || null;
+  };
+
+  const startConversation = async () => {
+    setLoading(true);
+    try {
+      const text = await callApi([{ role: "user", content: "Start." }]);
+      const reply = text || "What would you like me to find?";
+      const parsed = parseFindings(reply);
+      setMessages([{ role: "assistant", content: reply, findings: parsed?.findings || null, closing: parsed?.closing || null }]);
+      if (parsed) setPendingFindings(parsed);
+    } catch {
+      setMessages([{ role: "assistant", content: "What would you like me to find?" }]);
+    }
+    setLoading(false);
+  };
+
+  const send = async () => {
+    if (!input.trim() || loading) return;
+    const userMsg = { role: "user", content: input.trim() };
+    const next = [...messages, userMsg];
+    setMessages(next);
+    setInput("");
+    setLoading(true);
+    try {
+      const apiMsgs = next.map(m => ({ role: m.role, content: m.content }));
+      const text = await callApi(apiMsgs);
+      const reply = text || "I had trouble with that — try again.";
+      const parsed = parseFindings(reply);
+      setMessages(prev => [...prev, { role: "assistant", content: reply, findings: parsed?.findings || null, closing: parsed?.closing || null }]);
+      if (parsed) setPendingFindings(parsed);
+    } catch {
+      setMessages(prev => [...prev, { role: "assistant", content: "Something went wrong. Try again in a moment." }]);
+    }
+    setLoading(false);
+  };
+
+  const handleSave = () => {
+    setSaved(true);
+    onClose({ completed: true, findings: pendingFindings });
+  };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.6)", zIndex: 100, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+      <div style={{ background: "white", width: "100%", maxWidth: "560px", height: "90vh", display: "flex", flexDirection: "column", borderRadius: "12px 12px 0 0", overflow: "hidden" }}>
+
+        {/* Header */}
+        <div style={{ padding: "16px 20px 12px", borderBottom: "1px solid #e8e0d5", background: "#faf8f5", flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px" }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 2px", fontFamily: "'Inter', sans-serif" }}>Ask Lyme · Find</p>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "14px", color: "#1c1410", margin: "0 0 6px", fontWeight: 600 }}>{goal.goalText}</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                {items.map(it => (
+                  <span key={it.id} style={{ fontSize: "10px", color: TC.find, border: `1px solid ${TBORDER.find}`, padding: "2px 7px", borderRadius: "999px", fontFamily: "'Inter', sans-serif" }}>
+                    {it.text.length > 45 ? it.text.slice(0, 45) + "…" : it.text}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <button onClick={() => onClose({ completed: false })} style={{ fontSize: "18px", color: "#8a7455", background: "none", border: "none", cursor: "pointer", padding: "0 2px", lineHeight: 1, flexShrink: 0 }}>✕</button>
+          </div>
+        </div>
+
+        {/* Messages */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+          {messages.map((m, idx) => {
+            const isUser  = m.role === "user";
+            const cleaned = isUser ? m.content : stripFindingsBlock(m.content);
+            const isLast  = idx === messages.length - 1;
+            return (
+              <div key={idx} style={{ display: "flex", flexDirection: "column", alignItems: isUser ? "flex-end" : "flex-start" }}>
+                {!isUser && (
+                  <p style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.08em", color: "#b5472a", margin: "0 0 4px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
+                )}
+                {cleaned && (
+                  <div style={{ maxWidth: "85%", padding: "10px 14px", borderRadius: isUser ? "12px 12px 2px 12px" : "2px 12px 12px 12px", background: isUser ? TBG.find : "#f7f4f0", border: `1px solid ${isUser ? TBORDER.find : "#e8e0d5"}`, fontSize: "13px", color: "#1c1410", lineHeight: 1.55, whiteSpace: "pre-wrap", fontFamily: "'Inter', sans-serif" }}>
+                    {cleaned}
+                  </div>
+                )}
+                {/* Findings card — only on messages that carry findings */}
+                {m.findings && (
+                  <div style={{ marginTop: "8px", width: "min(85%, 360px)", border: `1px solid ${TBORDER.find}`, borderRadius: "6px", overflow: "hidden" }}>
+                    <div style={{ background: TBG.find, padding: "7px 12px", borderBottom: `1px solid ${TBORDER.find}` }}>
+                      <p style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.08em", color: TC.find, margin: 0, fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Findings</p>
+                    </div>
+                    <div style={{ background: "white", padding: "10px 12px" }}>
+                      {m.findings.map((f, fi) => (
+                        <div key={fi} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: fi < m.findings.length - 1 ? "7px" : 0 }}>
+                          <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: TC.find, marginTop: "6px", flexShrink: 0 }} />
+                          <p style={{ fontSize: "12px", color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{f}</p>
+                        </div>
+                      ))}
+                      {m.closing && <p style={{ fontSize: "11px", color: "#8a7455", margin: "8px 0 0", fontStyle: "italic", fontFamily: "'Inter', sans-serif" }}>{m.closing}</p>}
+                    </div>
+                    {!saved && isLast && (
+                      <div style={{ padding: "10px 12px", borderTop: `1px solid ${TBORDER.find}`, background: "#faf8f5" }}>
+                        <button onClick={handleSave} style={{ width: "100%", padding: "9px", fontSize: "12px", fontWeight: 600, color: "white", background: TC.find, border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "4px" }}>
+                          Save findings & mark done →
+                        </button>
+                      </div>
+                    )}
+                    {saved && isLast && (
+                      <div style={{ padding: "8px 12px", borderTop: `1px solid ${TBORDER.find}`, background: TBG.find }}>
+                        <p style={{ fontSize: "11px", color: TC.find, margin: 0, fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Saved ✓</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {loading && (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+              <p style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.08em", color: "#b5472a", margin: "0 0 4px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
+              <div style={{ padding: "10px 14px", borderRadius: "2px 12px 12px 12px", background: "#f7f4f0", border: "1px solid #e8e0d5" }}>
+                <span style={{ fontSize: "13px", color: "#8a7455", fontFamily: "'Inter', sans-serif" }}>Searching…</span>
+              </div>
+            </div>
+          )}
+          <div ref={bottomRef} />
+        </div>
+
+        {/* Input */}
+        <div style={{ padding: "12px 16px", borderTop: "1px solid #e8e0d5", background: "#faf8f5", flexShrink: 0 }}>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()}
+              disabled={loading}
+              placeholder={loading ? "Lyme is searching…" : "Add context or ask a follow-up…"}
+              style={{ flex: 1, border: "1px solid #d4c9bb", padding: "9px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "#faf8f5", outline: "none", opacity: loading ? 0.6 : 1 }}
+            />
+            <button onClick={send} disabled={loading || !input.trim()}
+              style={{ padding: "9px 16px", fontSize: "12px", fontWeight: 600, background: loading || !input.trim() ? "#c4b8a8" : TC.find, color: "white", border: "none", cursor: loading || !input.trim() ? "default" : "pointer", fontFamily: "'Inter', sans-serif" }}>
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Intro walkthrough modal ──────────────────────────────────────────────────
 const DEMO_ITEMS = [
   { id: "d1", text: "Email James about getting the group together", type: "forward" },
@@ -694,9 +899,8 @@ export function PlanScreen({
   const [selIndex,    setSelIndex]    = useState(initialIndex);
   const [activeType,  setActiveType]  = useState(null);
   const [bulkSel,     setBulkSel]     = useState(new Set());
-  const [modal,       setModal]       = useState(null);
-  const [findItem,    setFindItem]    = useState(null);
-  const [findAttempt, setFindAttempt] = useState(null);
+  const [modal,         setModal]         = useState(null);
+  const [findChatState, setFindChatState] = useState(null); // { goalId, items, goal }
   const [introStep, setIntroStep] = useState(() => localStorage.getItem("lyminal_plan_intro_seen") ? null : 0);
 
   const handleTalkToLyme = async (ag) => {
@@ -817,23 +1021,59 @@ export function PlanScreen({
     saveChart(session, { spheres, connections, activeGoals: updatedGoals, checkedItems: updatedChecked, completedGoals });
   };
 
-  const saveFindFact = (goalId, itemId, fact) => {
-    trackUserEvent(session, "find_completed", {
+  const openFindChat = (goalId, chatItems) => {
+    const ag = activeGoals.find(g => g.goalId === goalId);
+    if (!ag || chatItems.length === 0) return;
+    trackUserEvent(session, "find_started", {
       screen_name: "plan",
       goal_id: goalId,
-      action_item_id: itemId,
+      action_item_ids: chatItems.map(i => i.id),
+      action_count: chatItems.length,
     });
-    trackUserEvent(session, "find_fact_saved", {
-      screen_name: "plan",
-      goal_id: goalId,
-      action_item_id: itemId,
-    });
-    setFindAttempt((prev) => (prev && prev.itemId === itemId ? { ...prev, completed: true } : prev));
-    updateGoalItems(goalId, (items) => items.map((item) => {
-      if (item.id !== itemId) return item;
-      const facts = Array.isArray(item.findFacts) ? item.findFacts : [];
-      return { ...item, findFacts: [fact, ...facts].slice(0, 20) };
-    }));
+    setFindChatState({ goalId, items: chatItems, goal: ag });
+  };
+
+  const closeFindChat = (result = {}) => {
+    if (result.completed && findChatState) {
+      const { goalId, items: chatItems } = findChatState;
+      // Auto-check all items
+      const goalChecked = new Set(checkedItems[goalId] || []);
+      chatItems.forEach(it => goalChecked.add(it.id));
+      const updatedChecked = { ...checkedItems, [goalId]: goalChecked };
+      // Persist findings on each item
+      const selectedIds = new Set(chatItems.map(i => i.id));
+      const updatedGoals = activeGoals.map(ag => {
+        if (ag.goalId !== goalId) return ag;
+        return {
+          ...ag,
+          actionItems: normalizeActionItems(ag.actionItems || []).map(item => {
+            if (!selectedIds.has(item.id)) return item;
+            const facts = Array.isArray(item.findFacts) ? item.findFacts : [];
+            const newFact = result.findings
+              ? { findings: result.findings.findings, closing: result.findings.closing, savedAt: new Date().toISOString() }
+              : { savedAt: new Date().toISOString() };
+            return { ...item, findFacts: [newFact, ...facts].slice(0, 20) };
+          }),
+        };
+      });
+      setActiveGoals(updatedGoals);
+      setCheckedItems(updatedChecked);
+      saveChart(session, { spheres, connections, activeGoals: updatedGoals, checkedItems: updatedChecked, completedGoals });
+      trackUserEvent(session, "find_completed", {
+        screen_name: "plan",
+        goal_id: goalId,
+        action_item_ids: chatItems.map(i => i.id),
+        action_count: chatItems.length,
+      });
+    } else {
+      trackUserEvent(session, "find_canceled", {
+        screen_name: "plan",
+        goal_id: findChatState?.goalId || null,
+        action_item_ids: findChatState?.items.map(i => i.id) || [],
+      });
+    }
+    setFindChatState(null);
+    setBulkSel(new Set());
   };
 
   const openBulkModal = (type) => {
@@ -882,32 +1122,6 @@ export function PlanScreen({
     setBulkSel(new Set());
   };
 
-  const openFindPanel = (goalId, item) => {
-    trackUserEvent(session, "find_started", {
-      screen_name: "plan",
-      goal_id: goalId,
-      action_item_id: item.id,
-    });
-    setFindAttempt({ goalId, itemId: item.id, completed: false });
-    setFindItem(item);
-  };
-
-  const closeFindPanel = (result = {}) => {
-    if (result.completed && findAttempt) {
-      // Auto-check the item when user approves Lyme's response
-      toggleCheck(findAttempt.goalId, findAttempt.itemId);
-    }
-    if (!result.completed && findAttempt && !findAttempt.completed) {
-      trackUserEvent(session, "find_canceled", {
-        screen_name: "plan",
-        goal_id: findAttempt.goalId || null,
-        action_item_id: findAttempt.itemId,
-      });
-    }
-    setFindItem(null);
-    setFindAttempt(null);
-  };
-
   const retagItem = (goalId, itemId, newType) => {
     updateGoalItems(goalId, (items) => items.map((i) => i.id === itemId ? { ...i, type: newType } : i));
   };
@@ -940,6 +1154,7 @@ export function PlanScreen({
     <>
       {modal === "forward"  && <NewForwardModal  items={bulkItems} color={hc} onCommit={applyForward} onClose={closeForwardModal} />}
       {modal === "schedule" && <NewScheduleModal items={bulkItems} color={hc} session={session} onCommit={applySchedule} onClose={closeScheduleModal} />}
+      {findChatState && <FindChatModal items={findChatState.items} goal={findChatState.goal} session={session} onClose={closeFindChat} />}
       {introStep !== null && (
         <IntroModal
           step={introStep}
@@ -987,7 +1202,7 @@ export function PlanScreen({
 
           {/* Global filter pills */}
           <div style={{ display: "flex", gap: "8px", marginBottom: "14px", overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: "2px" }}>
-            <button title="Show all action items" onClick={() => { setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} style={{
+            <button title="Show all action items" onClick={() => { setActiveType(null); setBulkSel(new Set()); }} style={{
               padding: "7px 14px", cursor: "pointer", flexShrink: 0,
               fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: activeType === null ? 600 : 500,
               letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: "999px",
@@ -1010,7 +1225,7 @@ export function PlanScreen({
                 <button key={t} title={TITLES[t]} onClick={() => {
                   if (locked) { setAuthPrompt("upgrade"); return; }
                   setActiveType(activeType === t ? null : t);
-                  setBulkSel(new Set()); setFindItem(null);
+                  setBulkSel(new Set());
                 }} style={{
                   padding: "7px 14px", cursor: "pointer", flexShrink: 0,
                   fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600,
@@ -1046,7 +1261,6 @@ export function PlanScreen({
                   onClick={() => {
                     setSelIndex(i === selIndex ? null : i);
                     setBulkSel(new Set());
-                    setFindItem(null);
                   }}
                   style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: paleSphereColor(gHc), border: `1px solid ${paleSphereColorBorder(gHc)}`, borderLeft: "none", cursor: "pointer" }}
                 >
@@ -1099,8 +1313,6 @@ export function PlanScreen({
                       ) : gFiltered.map(item => {
                         const isDone   = checkedItems[g.goalId]?.has(item.id) || false;
                         const isBulked = bulkSel.has(item.id);
-                        const isFind   = item.type === "find";
-                        const findOpen = findItem?.id === item.id;
 
                         return (
                           <div key={item.id}>
@@ -1146,7 +1358,6 @@ export function PlanScreen({
                                 {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t === "finish" ? "Finish" : t}</option>)}
                               </select>
                             </div>
-                            {findOpen && <NewFindPanel item={item} goal={g} onSaveFact={(fact) => saveFindFact(g.goalId, item.id, fact)} onClose={closeFindPanel} />}
                           </div>
                         );
                       })}
@@ -1164,8 +1375,7 @@ export function PlanScreen({
                             disabled={gBulkItems.length === 0}
                             onClick={() => {
                               if (activeType === "find") {
-                                const first = gBulkItems[0];
-                                if (first) openFindPanel(g.goalId, first);
+                                openFindChat(g.goalId, gBulkItems);
                               } else {
                                 openBulkModal(activeType);
                               }
