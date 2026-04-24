@@ -1,4 +1,4 @@
-export const ACTION_TYPES = ["forward", "schedule", "find", "finish", "none"];
+export const ACTION_TYPES = ["forward", "finish", "schedule", "find", "none"];
 
 export const ACTION_TYPE_DESCRIPTIONS = `Use these definitions when assigning type:
 - forward: communicate, delegate, or send to another person (e.g. email, text, share with EA, ask a teammate)
