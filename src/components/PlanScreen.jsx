@@ -1167,6 +1167,22 @@ export function PlanScreen({
             );
           })}
 
+          {/* Empty state when filter is active but no goals match */}
+          {activeType !== null && !activeGoals.some(g =>
+            normalizeActionItems(g.actionItems || []).some(item => item.type === activeType)
+          ) && (
+            <div style={{ textAlign: "center", padding: "48px 24px" }}>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "var(--ly-ink)", margin: "0 0 8px" }}>Nothing here yet</p>
+              <p style={{ fontSize: "13px", color: MUTED, fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>
+                None of your action items are tagged <span style={{ fontWeight: 600, color: TC[activeType] }}>{activeType === "none" ? "Unassigned" : activeType.charAt(0).toUpperCase() + activeType.slice(1)}</span> yet.
+              </p>
+              <button onClick={() => { setActiveType(null); setBulkSel(new Set()); }}
+                style={{ fontSize: "11px", fontWeight: 600, color: COPPER, background: "none", border: `1px solid ${COPPER}`, padding: "8px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "999px", letterSpacing: "0.06em" }}>
+                Show all items
+              </button>
+            </div>
+          )}
+
         </div>
         </div>
         </div>{/* end fade wrapper */}
