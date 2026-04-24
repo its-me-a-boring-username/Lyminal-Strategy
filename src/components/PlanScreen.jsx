@@ -1011,9 +1011,9 @@ export function PlanScreen({
             const gHc          = hcForGoal(g);
             const gAllItems    = normalizeActionItems(g.actionItems || []);
             const gFiltered    = activeType ? gAllItems.filter(item => item.type === activeType) : gAllItems;
-            // When filter active: auto-expand every goal that has matching items
-            const isExpanded   = activeType !== null ? gFiltered.length > 0 : i === selIndex;
-            // Bulk UI only appears for the currently selected goal
+            // Standard accordion: one open at a time (filter only controls visibility, not expand state)
+            const isExpanded   = i === selIndex;
+            // Action button (Forward/Schedule) only for those types on the selected goal
             const gShowBulk    = (activeType === "forward" || activeType === "schedule") && i === selIndex;
             const gBulkItems   = gFiltered.filter(item => bulkSel.has(item.id));
             // When filter is active, hide goals that have no matching items entirely
@@ -1023,8 +1023,7 @@ export function PlanScreen({
                 {/* Accordion header row */}
                 <div
                   onClick={() => {
-                    // In filter mode just change which goal owns bulk selection; don't clear the filter
-                    setSelIndex(activeType !== null ? i : (i === selIndex ? null : i));
+                    setSelIndex(i === selIndex ? null : i);
                     setBulkSel(new Set());
                     setFindItem(null);
                   }}
@@ -1085,10 +1084,8 @@ export function PlanScreen({
                         return (
                           <div key={item.id}>
                             <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
-                              {gShowBulk && (
-                                <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
-                                  style={{ marginTop: "2px", flexShrink: 0, accentColor: gHc }} />
-                              )}
+                              <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
+                                style={{ marginTop: "2px", flexShrink: 0, accentColor: gHc }} />
                               <button onClick={() => toggleCheck(g.goalId, item.id)} style={{
                                 width: "16px", height: "16px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
                                 border: `1.5px solid ${isDone ? gHc : "#d4c9bb"}`, background: isDone ? gHc : "white",
@@ -1147,18 +1144,20 @@ export function PlanScreen({
                         );
                       })}
                     </div>
-                    {/* Bulk bar — only for the selected goal */}
-                    {gShowBulk && gFiltered.length > 0 && (
+                    {/* Bulk bar — always visible when expanded with items */}
+                    {gFiltered.length > 0 && (
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 18px", background: CARD_DARK, borderTop: `1px solid ${BORDER_DARK}` }}>
                         <button onClick={gBulkItems.length === gFiltered.length ? () => setBulkSel(new Set()) : () => setBulkSel(new Set(gFiltered.map(item => item.id)))}
-                          style={{ fontSize: "11px", color: CREAM, background: "none", border: `1px solid ${BORDER_DARK}`, padding: "5px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+                          style={{ fontSize: "11px", color: gHc, background: "none", border: `1px solid ${gHc}`, padding: "5px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
                           {gBulkItems.length === gFiltered.length ? "Clear" : "Select all"}
                         </button>
                         <span style={{ fontSize: "11px", color: MUTED, flex: 1 }}>{gBulkItems.length} selected</span>
-                        <button onClick={() => openBulkModal(activeType)} disabled={gBulkItems.length === 0}
-                          style={{ fontSize: "11px", fontWeight: 600, color: "white", background: gBulkItems.length > 0 ? gHc : "#c4b8a8", border: "none", padding: "7px 16px", cursor: gBulkItems.length > 0 ? "pointer" : "default", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
-                          {activeType === "forward" ? "Forward selected →" : "Schedule selected →"}
-                        </button>
+                        {gShowBulk && (
+                          <button onClick={() => openBulkModal(activeType)} disabled={gBulkItems.length === 0}
+                            style={{ fontSize: "11px", fontWeight: 600, color: "white", background: gHc, border: "none", padding: "7px 16px", cursor: gBulkItems.length > 0 ? "pointer" : "default", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em", opacity: gBulkItems.length > 0 ? 1 : 0.45 }}>
+                            {activeType === "forward" ? "Forward selected →" : "Schedule selected →"}
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
