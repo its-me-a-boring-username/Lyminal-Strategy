@@ -1,17 +1,20 @@
-export const ACTION_TYPES = ["forward", "schedule", "find", "none"];
+export const ACTION_TYPES = ["forward", "schedule", "find", "finish", "none"];
 
 export const ACTION_TYPE_DESCRIPTIONS = `Use these definitions when assigning type:
 - forward: communicate, delegate, or send to another person (e.g. email, text, share with EA, ask a teammate)
 - schedule: anything time-based or location-based (e.g. calendar block, reminder, appointment, go somewhere, meet someone)
-- find: research, source, or acquire (e.g. look something up, find options, buy or order a product)`;
+- find: research, source, or acquire (e.g. look something up, find options, buy or order a product)
+- finish: complete or finalise directly yourself (e.g. submit a form, file a document, publish, sign, launch)`;
 
 const FORWARD_HINTS = ["send", "email", "share", "delegate", "ea", "forward", "message", "text", "call", "communicate", "ask", "tell", "notify"];
 const SCHEDULE_HINTS = ["schedule", "book", "calendar", "appointment", "remind", "meeting", "block", "go", "visit", "trip", "attend", "check out"];
+const FINISH_HINTS   = ["finish", "complete", "finalise", "finalize", "submit", "publish", "file", "sign off", "launch", "release"];
 
 export function inferActionType(text = "") {
   const value = String(text || "").toLowerCase();
   if (FORWARD_HINTS.some((hint) => value.includes(hint))) return "forward";
   if (SCHEDULE_HINTS.some((hint) => value.includes(hint))) return "schedule";
+  if (FINISH_HINTS.some((hint) => value.includes(hint))) return "finish";
   return "find";
 }
 
@@ -32,7 +35,7 @@ export function normalizeActionItem(item, index = 0) {
   const text = String(item.text || "").trim();
   const rawType = String(item.type || "").toLowerCase();
   // "none" = explicitly unassigned; anything unrecognised falls back to inference for legacy data
-  const type = rawType === "none" ? "none" : (["forward", "schedule", "find"].includes(rawType) ? rawType : inferActionType(text));
+  const type = rawType === "none" ? "none" : (["forward", "schedule", "find", "finish"].includes(rawType) ? rawType : inferActionType(text));
 
   return {
     id: item.id || `legacy_${Date.now()}_${index}`,

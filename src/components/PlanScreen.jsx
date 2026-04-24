@@ -33,9 +33,9 @@ function paleSphereColorBorder(hex) {
   return `rgb(${Math.round(0.70*255+0.30*r)},${Math.round(0.70*255+0.30*g)},${Math.round(0.70*255+0.30*b)})`;
 }
 
-const TC     = { forward: "#8a5a44", schedule: "#4a7a72", find: "#5c6f9b", none: "#6e5c4a" };
-const TBG    = { forward: "#f7f0ec", schedule: "#edf4f1", find: "#eef0f6", none: "#f5f2ee" };
-const TBORDER = { forward: "#d4a890", schedule: "#9fd4c4", find: "#b0bcd8", none: "#d4c9bb" };
+const TC     = { forward: "#8a5a44", schedule: "#4a7a72", find: "#5c6f9b", finish: "#5a7a4a", none: "#6e5c4a" };
+const TBG    = { forward: "#f7f0ec", schedule: "#edf4f1", find: "#eef0f6", finish: "#eef4ec", none: "#f5f2ee" };
+const TBORDER = { forward: "#d4a890", schedule: "#9fd4c4", find: "#b0bcd8", finish: "#a0c890", none: "#d4c9bb" };
 
 const BG = "var(--ly-bg)";
 const COPPER = "#a05c28";
@@ -525,6 +525,7 @@ function IntroStep0() {
         { type: "forward",  label: "Forward",  desc: "Delegate or communicate — send items to an EA, teammate, or anyone who should handle them." },
         { type: "schedule", label: "Schedule", desc: "Block time or set reminders — for anything that needs a calendar event or a nudge." },
         { type: "find",     label: "Find",     desc: "Ask Lyme to research, source or buy — powered by web search." },
+        { type: "finish",   label: "Finish",   desc: "Complete it yourself — submit a form, publish a draft, file a document, or sign off on something." },
       ].map(({ type, label, desc }) => (
         <div key={type} style={{ display: "flex", gap: "12px", marginBottom: "14px", alignItems: "flex-start" }}>
           <span style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.05em", padding: "3px 8px", background: TBG[type], color: TC[type], fontFamily: "'Inter', sans-serif", flexShrink: 0, marginTop: "2px" }}>
@@ -736,10 +737,10 @@ export function PlanScreen({
   const showBulk      = activeType === "forward" || activeType === "schedule";
   const bulkItems     = filteredItems.filter(i => bulkSel.has(i.id));
 
-  const toggleCheck = (itemId) => {
-    const next = new Set(checkedItems[goal.goalId] || []);
+  const toggleCheck = (goalId, itemId) => {
+    const next = new Set(checkedItems[goalId] || []);
     next.has(itemId) ? next.delete(itemId) : next.add(itemId);
-    const updated = { ...checkedItems, [goal.goalId]: next };
+    const updated = { ...checkedItems, [goalId]: next };
     setCheckedItems(updated);
     saveChart(session, { spheres, connections, activeGoals, checkedItems: updated, completedGoals });
   };
@@ -750,9 +751,9 @@ export function PlanScreen({
     return next;
   });
 
-  const updateGoalItems = (updater) => {
+  const updateGoalItems = (goalId, updater) => {
     const updated = activeGoals.map((ag) => {
-      if (ag.goalId !== goal.goalId) return ag;
+      if (ag.goalId !== goalId) return ag;
       return {
         ...ag,
         actionItems: updater(normalizeActionItems(ag.actionItems || [])),
@@ -772,7 +773,7 @@ export function PlanScreen({
       channel: payload?.channel || "email",
     });
     const selectedIds = new Set(bulkItems.map((i) => i.id));
-    updateGoalItems((items) => items.map((item) => {
+    updateGoalItems(goal.goalId, (items) => items.map((item) => {
       if (!selectedIds.has(item.id)) return item;
       const logs = Array.isArray(item.forwardLogs) ? item.forwardLogs : [];
       return {
@@ -793,25 +794,25 @@ export function PlanScreen({
       repeat: payload?.repeat || "once",
     });
     const selectedIds = new Set(bulkItems.map((i) => i.id));
-    updateGoalItems((items) => items.map((item) => {
+    updateGoalItems(goal.goalId, (items) => items.map((item) => {
       if (!selectedIds.has(item.id)) return item;
       return { ...item, schedule: payload };
     }));
   };
 
-  const saveFindFact = (itemId, fact) => {
+  const saveFindFact = (goalId, itemId, fact) => {
     trackUserEvent(session, "find_completed", {
       screen_name: "plan",
-      goal_id: goal?.goalId || null,
+      goal_id: goalId,
       action_item_id: itemId,
     });
     trackUserEvent(session, "find_fact_saved", {
       screen_name: "plan",
-      goal_id: goal?.goalId || null,
+      goal_id: goalId,
       action_item_id: itemId,
     });
     setFindAttempt((prev) => (prev && prev.itemId === itemId ? { ...prev, completed: true } : prev));
-    updateGoalItems((items) => items.map((item) => {
+    updateGoalItems(goalId, (items) => items.map((item) => {
       if (item.id !== itemId) return item;
       const facts = Array.isArray(item.findFacts) ? item.findFacts : [];
       return { ...item, findFacts: [fact, ...facts].slice(0, 20) };
@@ -864,13 +865,13 @@ export function PlanScreen({
     setBulkSel(new Set());
   };
 
-  const openFindPanel = (item) => {
+  const openFindPanel = (goalId, item) => {
     trackUserEvent(session, "find_started", {
       screen_name: "plan",
-      goal_id: goal?.goalId || null,
+      goal_id: goalId,
       action_item_id: item.id,
     });
-    setFindAttempt({ itemId: item.id, completed: false });
+    setFindAttempt({ goalId, itemId: item.id, completed: false });
     setFindItem(item);
   };
 
@@ -878,7 +879,7 @@ export function PlanScreen({
     if (!result.completed && findAttempt && !findAttempt.completed) {
       trackUserEvent(session, "find_canceled", {
         screen_name: "plan",
-        goal_id: goal?.goalId || null,
+        goal_id: findAttempt.goalId || null,
         action_item_id: findAttempt.itemId,
       });
     }
@@ -886,8 +887,8 @@ export function PlanScreen({
     setFindAttempt(null);
   };
 
-  const retagItem = (itemId, newType) => {
-    updateGoalItems((items) => items.map((i) => i.id === itemId ? { ...i, type: newType } : i));
+  const retagItem = (goalId, itemId, newType) => {
+    updateGoalItems(goalId, (items) => items.map((i) => i.id === itemId ? { ...i, type: newType } : i));
   };
 
   // (free users see the full Plan UI in preview mode — action buttons are locked)
@@ -965,7 +966,7 @@ export function PlanScreen({
 
           {/* Global filter pills */}
           <div style={{ display: "flex", gap: "8px", marginBottom: "14px", overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: "2px" }}>
-            <button onClick={() => { setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} style={{
+            <button title="Show all action items" onClick={() => { setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} style={{
               padding: "7px 14px", cursor: "pointer", flexShrink: 0,
               fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: activeType === null ? 600 : 500,
               letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: "999px",
@@ -977,8 +978,15 @@ export function PlanScreen({
             {ACTION_TYPES.map(t => {
               const isAct  = activeType === t;
               const locked = (!isPaid && t !== "none") || (t === "find" && !isPro);
+              const TITLES = {
+                forward:  "Communicate, delegate, or send to another person",
+                schedule: "Anything time-based — calendar blocks, reminders, appointments",
+                find:     "Research, source, or acquire — ask Lyme to search the web",
+                finish:   "Complete it directly — submit, file, publish, sign off",
+                none:     "Unassigned items — not yet categorised",
+              };
               return (
-                <button key={t} onClick={() => {
+                <button key={t} title={TITLES[t]} onClick={() => {
                   if (locked) { setAuthPrompt("upgrade"); return; }
                   setActiveType(activeType === t ? null : t);
                   setBulkSel(new Set()); setFindItem(null);
@@ -992,7 +1000,7 @@ export function PlanScreen({
                   color: isAct ? TC[t] : "white",
                   transition: "all 0.15s",
                 }}>
-                  {t === "forward" ? "Forward" : t === "schedule" ? "Schedule" : t === "find" ? "Find" : "Unassigned"}{locked ? " 🔒" : ""}
+                  {t === "forward" ? "Forward" : t === "schedule" ? "Schedule" : t === "find" ? "Find" : t === "finish" ? "Finish" : "Unassigned"}{locked ? " 🔒" : ""}
                 </button>
               );
             })}
@@ -1000,13 +1008,24 @@ export function PlanScreen({
 
           {/* Goal accordion */}
           {activeGoals.map((g, i) => {
-            const gHc = hcForGoal(g);
-            const isExpanded = i === selIndex;
+            const gHc          = hcForGoal(g);
+            const gAllItems    = normalizeActionItems(g.actionItems || []);
+            const gFiltered    = activeType ? gAllItems.filter(item => item.type === activeType) : gAllItems;
+            // When filter active: auto-expand every goal that has matching items
+            const isExpanded   = activeType !== null ? gFiltered.length > 0 : i === selIndex;
+            // Bulk UI only appears for the currently selected goal
+            const gShowBulk    = (activeType === "forward" || activeType === "schedule") && i === selIndex;
+            const gBulkItems   = gFiltered.filter(item => bulkSel.has(item.id));
             return (
               <div key={g.goalId} style={{ marginBottom: "10px", borderLeft: `3px solid ${gHc}`, borderRadius: "0 6px 6px 0", overflow: "hidden" }}>
                 {/* Accordion header row */}
                 <div
-                  onClick={() => { setSelIndex(i === selIndex ? null : i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }}
+                  onClick={() => {
+                    // In filter mode just change which goal owns bulk selection; don't clear the filter
+                    setSelIndex(activeType !== null ? i : (i === selIndex ? null : i));
+                    setBulkSel(new Set());
+                    setFindItem(null);
+                  }}
                   style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: paleSphereColor(gHc), border: `1px solid ${paleSphereColorBorder(gHc)}`, borderLeft: "none", cursor: "pointer" }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -1029,14 +1048,14 @@ export function PlanScreen({
                 {isExpanded && (
                   <div style={{ border: `1px solid ${BORDER_DARK}`, borderLeft: "none", borderTop: "none", background: "white", overflow: "hidden" }}>
                     <div>
-                      {filteredItems.length === 0 ? (
+                      {gFiltered.length === 0 ? (
                         <div style={{ padding: "28px 18px", textAlign: "center" }}>
-                          {allItems.length === 0 ? (
+                          {gAllItems.length === 0 ? (
                             <>
                               <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 16px", fontStyle: "italic" }}>No action items yet for this goal.</p>
                               <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
-                                <button onClick={() => goal && handleTalkToLyme(goal)}
-                                  style={{ fontSize: "11px", fontWeight: 600, color: "white", background: hc, border: "none", padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px", letterSpacing: "0.04em" }}>
+                                <button onClick={() => handleTalkToLyme(g)}
+                                  style={{ fontSize: "11px", fontWeight: 600, color: "white", background: gHc, border: "none", padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px", letterSpacing: "0.04em" }}>
                                   Talk to Lyme →
                                 </button>
                                 <button onClick={() => setStep("active")}
@@ -1055,8 +1074,8 @@ export function PlanScreen({
                             </>
                           )}
                         </div>
-                      ) : filteredItems.map(item => {
-                        const isDone   = checkedItems[goal.goalId]?.has(item.id) || false;
+                      ) : gFiltered.map(item => {
+                        const isDone   = checkedItems[g.goalId]?.has(item.id) || false;
                         const isBulked = bulkSel.has(item.id);
                         const isFind   = item.type === "find";
                         const findOpen = findItem?.id === item.id;
@@ -1064,13 +1083,13 @@ export function PlanScreen({
                         return (
                           <div key={item.id}>
                             <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
-                              {showBulk && (
+                              {gShowBulk && (
                                 <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
-                                  style={{ marginTop: "2px", flexShrink: 0, accentColor: hc }} />
+                                  style={{ marginTop: "2px", flexShrink: 0, accentColor: gHc }} />
                               )}
-                              <button onClick={() => toggleCheck(item.id)} style={{
+                              <button onClick={() => toggleCheck(g.goalId, item.id)} style={{
                                 width: "16px", height: "16px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
-                                border: `1.5px solid ${isDone ? hc : "#d4c9bb"}`, background: isDone ? hc : "white",
+                                border: `1.5px solid ${isDone ? gHc : "#d4c9bb"}`, background: isDone ? gHc : "white",
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 cursor: "pointer", padding: 0, transition: "all 0.15s",
                               }}>
@@ -1102,7 +1121,7 @@ export function PlanScreen({
                                 {isFind && activeType === "find" && (
                                   <div style={{ marginTop: "5px" }}>
                                     {isPro ? (
-                                      <button onClick={() => (findOpen ? closeFindPanel({ completed: false }) : openFindPanel(item))}
+                                      <button onClick={() => (findOpen ? closeFindPanel({ completed: false }) : openFindPanel(g.goalId, item))}
                                         style={{ fontSize: "10px", fontWeight: 600, color: TC.find, background: "none", border: `1px solid ${TBORDER.find}`, padding: "3px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
                                         {findOpen ? "Close" : "Ask Lyme"}
                                       </button>
@@ -1116,26 +1135,26 @@ export function PlanScreen({
                                   </div>
                                 )}
                               </div>
-                              <select value={item.type} onChange={e => retagItem(item.id, e.target.value)}
-                                style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.04em", padding: "5px 10px", border: "none", borderRadius: "4px", background: TBG[item.type], color: TC[item.type], cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
-                                {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t}</option>)}
+                              <select value={item.type} onChange={e => retagItem(g.goalId, item.id, e.target.value)}
+                                style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.04em", padding: "5px 10px", border: "none", borderRadius: "4px", background: TBG[item.type] || TBG.none, color: TC[item.type] || TC.none, cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
+                                {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t === "finish" ? "Finish" : t}</option>)}
                               </select>
                             </div>
-                            {findOpen && <NewFindPanel item={item} goal={goal} onSaveFact={(fact) => saveFindFact(item.id, fact)} onClose={closeFindPanel} />}
+                            {findOpen && <NewFindPanel item={item} goal={g} onSaveFact={(fact) => saveFindFact(g.goalId, item.id, fact)} onClose={closeFindPanel} />}
                           </div>
                         );
                       })}
                     </div>
-                    {/* Bulk bar */}
-                    {showBulk && filteredItems.length > 0 && (
+                    {/* Bulk bar — only for the selected goal */}
+                    {gShowBulk && gFiltered.length > 0 && (
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 18px", background: CARD_DARK, borderTop: `1px solid ${BORDER_DARK}` }}>
-                        <button onClick={bulkSel.size === filteredItems.length ? () => setBulkSel(new Set()) : () => setBulkSel(new Set(filteredItems.map(i => i.id)))}
+                        <button onClick={gBulkItems.length === gFiltered.length ? () => setBulkSel(new Set()) : () => setBulkSel(new Set(gFiltered.map(item => item.id)))}
                           style={{ fontSize: "11px", color: CREAM, background: "none", border: `1px solid ${BORDER_DARK}`, padding: "5px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
-                          {bulkSel.size === filteredItems.length ? "Clear" : "Select all"}
+                          {gBulkItems.length === gFiltered.length ? "Clear" : "Select all"}
                         </button>
-                        <span style={{ fontSize: "11px", color: MUTED, flex: 1 }}>{bulkSel.size} selected</span>
-                        <button onClick={() => openBulkModal(activeType)} disabled={bulkSel.size === 0}
-                          style={{ fontSize: "11px", fontWeight: 600, color: "white", background: bulkSel.size > 0 ? hc : "#c4b8a8", border: "none", padding: "7px 16px", cursor: bulkSel.size > 0 ? "pointer" : "default", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
+                        <span style={{ fontSize: "11px", color: MUTED, flex: 1 }}>{gBulkItems.length} selected</span>
+                        <button onClick={() => openBulkModal(activeType)} disabled={gBulkItems.length === 0}
+                          style={{ fontSize: "11px", fontWeight: 600, color: "white", background: gBulkItems.length > 0 ? gHc : "#c4b8a8", border: "none", padding: "7px 16px", cursor: gBulkItems.length > 0 ? "pointer" : "default", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
                           {activeType === "forward" ? "Forward selected →" : "Schedule selected →"}
                         </button>
                       </div>
