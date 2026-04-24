@@ -1004,7 +1004,7 @@ export function PlanScreen({
                 schedule: "Anything time-based — calendar blocks, reminders, appointments",
                 find:     "Research, source, or acquire — ask Lyme to search the web",
                 finish:   "Complete it directly — submit, file, publish, sign off",
-                none:     "Unassigned items — not yet categorised",
+                none:     "Items without a label — not yet categorised",
               };
               return (
                 <button key={t} title={TITLES[t]} onClick={() => {
@@ -1021,7 +1021,7 @@ export function PlanScreen({
                   color: isAct ? TC[t] : "white",
                   transition: "all 0.15s",
                 }}>
-                  {t === "forward" ? "Forward" : t === "schedule" ? "Schedule" : t === "find" ? "Find" : t === "finish" ? "Finish" : "Unassigned"}{locked ? " 🔒" : ""}
+                  {t === "forward" ? "Forward" : t === "schedule" ? "Schedule" : t === "find" ? "Find" : t === "finish" ? "Finish" : "No Label"}{locked ? " 🔒" : ""}
                 </button>
               );
             })}
@@ -1088,7 +1088,7 @@ export function PlanScreen({
                             </>
                           ) : (
                             <>
-                              <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 14px", fontStyle: "italic" }}>No {activeType === "none" ? "unassigned" : activeType} items for this goal.</p>
+                              <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 14px", fontStyle: "italic" }}>No {activeType === "none" ? "no-label" : activeType} items for this goal.</p>
                               <button onClick={() => { setActiveType(null); setBulkSel(new Set()); }}
                                 style={{ fontSize: "11px", color: COPPER, background: "none", border: "1px solid #e8e0d5", padding: "7px 16px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
                                 Show all items
@@ -1189,7 +1189,7 @@ export function PlanScreen({
             <div style={{ textAlign: "center", padding: "48px 24px" }}>
               <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "var(--ly-ink)", margin: "0 0 8px" }}>Nothing here yet</p>
               <p style={{ fontSize: "13px", color: MUTED, fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>
-                None of your action items are tagged <span style={{ fontWeight: 600, color: TC[activeType] }}>{activeType === "none" ? "Unassigned" : activeType.charAt(0).toUpperCase() + activeType.slice(1)}</span> yet.
+                None of your action items are tagged <span style={{ fontWeight: 600, color: TC[activeType] }}>{activeType === "none" ? "No Label" : activeType.charAt(0).toUpperCase() + activeType.slice(1)}</span> yet.
               </p>
               <button onClick={() => { setActiveType(null); setBulkSel(new Set()); }}
                 style={{ fontSize: "11px", fontWeight: 600, color: COPPER, background: "none", border: `1px solid ${COPPER}`, padding: "8px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "999px", letterSpacing: "0.06em" }}>
