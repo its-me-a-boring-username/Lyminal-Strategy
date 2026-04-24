@@ -435,17 +435,25 @@ export function ProgressScreen({
 
   const getPct = (s) => {
     const ag = activeGoals.find(g => g.sphereId === s.id);
-    if (!ag) return null;
-    if (completedGoals.has(ag.goalId)) return 100;
-    const total = ag.actionItems.length;
-    if (total === 0) return 0;
-    const done = checkedItems[ag.goalId]?.size || 0;
-    return Math.round((done / total) * 100);
+    if (ag) {
+      if (completedGoals.has(ag.goalId)) return 100;
+      const total = ag.actionItems.length;
+      if (total === 0) return 0;
+      const done = checkedItems[ag.goalId]?.size || 0;
+      return Math.round((done / total) * 100);
+    }
+    // No active goal — check if any goal in this sphere was previously completed
+    const sphereGoalIds = (s.goals || []).map(g => g.id);
+    if (sphereGoalIds.some(id => completedGoals.has(id))) return 100;
+    return null;
   };
 
   const currentSphere = spheres[selected];
   const activeGoal = currentSphere ? activeGoals.find(ag => ag.sphereId === currentSphere.id) : null;
   const headerColor = currentSphere?.color || "#4a7a72";
+  const completedSphereGoals = (currentSphere?.goals || []).filter(
+    g => completedGoals.has(g.id) && g.id !== activeGoal?.goalId
+  );
 
   if (spheres.length === 0) {
     return (
@@ -552,6 +560,29 @@ export function ProgressScreen({
               setChatLoading={setChatLoading}
               isDefault={isDefault}
             />
+
+            {/* Completed goals for this sphere */}
+            {completedSphereGoals.length > 0 && (
+              <div style={{ marginTop: "24px" }}>
+                <p style={{ fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 10px", fontFamily: "'Inter', sans-serif" }}>
+                  Completed
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  {completedSphereGoals.map(g => (
+                    <div key={g.id} style={{ background: "white", borderLeft: `3px solid ${currentSphere.color}50`, padding: "10px 16px", display: "flex", alignItems: "center", gap: "10px", opacity: 0.6 }}>
+                      <div style={{ width: "14px", height: "14px", borderRadius: "3px", flexShrink: 0, background: currentSphere.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <svg width="8" height="8" viewBox="0 0 8 8">
+                          <path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                        </svg>
+                      </div>
+                      <p style={{ fontSize: "0.875rem", color: "#5c4e40", textDecoration: "line-through", margin: 0, fontFamily: "'Playfair Display', serif", fontStyle: "italic", lineHeight: 1.3 }}>
+                        {g.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
         </div>{/* end fade wrapper */}
