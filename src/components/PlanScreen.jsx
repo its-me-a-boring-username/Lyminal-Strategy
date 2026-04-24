@@ -773,14 +773,21 @@ export function PlanScreen({
       channel: payload?.channel || "email",
     });
     const selectedIds = new Set(bulkItems.map((i) => i.id));
-    updateGoalItems(goal.goalId, (items) => items.map((item) => {
-      if (!selectedIds.has(item.id)) return item;
-      const logs = Array.isArray(item.forwardLogs) ? item.forwardLogs : [];
-      return {
-        ...item,
-        forwardLogs: [...logs, { ...payload, initiatedAt: new Date().toISOString(), status: "initiated" }],
-      };
-    }));
+    const updatedGoals = activeGoals.map((ag) => {
+      if (ag.goalId !== goal.goalId) return ag;
+      return { ...ag, actionItems: normalizeActionItems(ag.actionItems || []).map((item) => {
+        if (!selectedIds.has(item.id)) return item;
+        const logs = Array.isArray(item.forwardLogs) ? item.forwardLogs : [];
+        return { ...item, forwardLogs: [...logs, { ...payload, initiatedAt: new Date().toISOString(), status: "initiated" }] };
+      }) };
+    });
+    // Auto-check forwarded items
+    const goalChecked = new Set(checkedItems[goal.goalId] || []);
+    bulkItems.forEach(item => goalChecked.add(item.id));
+    const updatedChecked = { ...checkedItems, [goal.goalId]: goalChecked };
+    setActiveGoals(updatedGoals);
+    setCheckedItems(updatedChecked);
+    saveChart(session, { spheres, connections, activeGoals: updatedGoals, checkedItems: updatedChecked, completedGoals });
   };
 
   const applySchedule = (payload) => {
@@ -794,10 +801,20 @@ export function PlanScreen({
       repeat: payload?.repeat || "once",
     });
     const selectedIds = new Set(bulkItems.map((i) => i.id));
-    updateGoalItems(goal.goalId, (items) => items.map((item) => {
-      if (!selectedIds.has(item.id)) return item;
-      return { ...item, schedule: payload };
-    }));
+    const updatedGoals = activeGoals.map((ag) => {
+      if (ag.goalId !== goal.goalId) return ag;
+      return { ...ag, actionItems: normalizeActionItems(ag.actionItems || []).map((item) => {
+        if (!selectedIds.has(item.id)) return item;
+        return { ...item, schedule: payload };
+      }) };
+    });
+    // Auto-check scheduled items
+    const goalChecked = new Set(checkedItems[goal.goalId] || []);
+    bulkItems.forEach(item => goalChecked.add(item.id));
+    const updatedChecked = { ...checkedItems, [goal.goalId]: goalChecked };
+    setActiveGoals(updatedGoals);
+    setCheckedItems(updatedChecked);
+    saveChart(session, { spheres, connections, activeGoals: updatedGoals, checkedItems: updatedChecked, completedGoals });
   };
 
   const saveFindFact = (goalId, itemId, fact) => {
@@ -876,6 +893,10 @@ export function PlanScreen({
   };
 
   const closeFindPanel = (result = {}) => {
+    if (result.completed && findAttempt) {
+      // Auto-check the item when user approves Lyme's response
+      toggleCheck(findAttempt.goalId, findAttempt.itemId);
+    }
     if (!result.completed && findAttempt && !findAttempt.completed) {
       trackUserEvent(session, "find_canceled", {
         screen_name: "plan",
@@ -1084,8 +1105,10 @@ export function PlanScreen({
                         return (
                           <div key={item.id}>
                             <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
-                              <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
-                                style={{ marginTop: "2px", flexShrink: 0, accentColor: gHc }} />
+                              {activeType !== null && activeType !== "finish" && (
+                                <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
+                                  style={{ marginTop: "2px", flexShrink: 0, accentColor: gHc }} />
+                              )}
                               <button onClick={() => toggleCheck(g.goalId, item.id)} style={{
                                 width: "16px", height: "16px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
                                 border: `1.5px solid ${isDone ? gHc : "#d4c9bb"}`, background: isDone ? gHc : "white",
@@ -1128,8 +1151,8 @@ export function PlanScreen({
                         );
                       })}
                     </div>
-                    {/* Bulk bar — always visible when expanded with items */}
-                    {gFiltered.length > 0 && (
+                    {/* Bulk bar — hidden for ALL and FINISH; visible for all other filter types */}
+                    {activeType !== null && activeType !== "finish" && gFiltered.length > 0 && (
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 18px", background: CARD_DARK, borderTop: `1px solid ${BORDER_DARK}` }}>
                         <button onClick={gBulkItems.length === gFiltered.length ? () => setBulkSel(new Set()) : () => setBulkSel(new Set(gFiltered.map(item => item.id)))}
                           style={{ fontSize: "11px", color: gHc, background: "none", border: `1px solid ${gHc}`, padding: "5px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
