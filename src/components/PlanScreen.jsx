@@ -33,9 +33,9 @@ function paleSphereColorBorder(hex) {
   return `rgb(${Math.round(0.70*255+0.30*r)},${Math.round(0.70*255+0.30*g)},${Math.round(0.70*255+0.30*b)})`;
 }
 
-const TC     = { forward: "#8a5a44", schedule: "#4a7a72", find: "#5c6f9b", finish: "#5a7a4a", none: "#6e5c4a" };
-const TBG    = { forward: "#f7f0ec", schedule: "#edf4f1", find: "#eef0f6", finish: "#eef4ec", none: "#f5f2ee" };
-const TBORDER = { forward: "#d4a890", schedule: "#9fd4c4", find: "#b0bcd8", finish: "#a0c890", none: "#d4c9bb" };
+const TC     = { forward: "#8a5a44", schedule: "#4a7a72", find: "#5c6f9b", finish: "#7a4a72", none: "#6e5c4a" };
+const TBG    = { forward: "#f7f0ec", schedule: "#edf4f1", find: "#eef0f6", finish: "#f5eef4", none: "#f5f2ee" };
+const TBORDER = { forward: "#d4a890", schedule: "#9fd4c4", find: "#b0bcd8", finish: "#c8a0c0", none: "#d4c9bb" };
 
 const BG = "var(--ly-bg)";
 const COPPER = "#a05c28";
