@@ -479,6 +479,9 @@ function GoalChart() {
           setChatLoading={setChatLoading}
           isMobile={isMobile}
           selectedTheme={selectedTheme}
+          businessMode={businessMode}
+          businessStage={businessStage}
+          startupStage={startupStage}
         />
       </>
     );
@@ -510,6 +513,9 @@ function GoalChart() {
           setChatMessages={setChatMessages}
           setChatLoading={setChatLoading}
           selectedTheme={selectedTheme}
+          businessMode={businessMode}
+          businessStage={businessStage}
+          startupStage={startupStage}
         />
       </>
     );
@@ -560,6 +566,9 @@ function GoalChart() {
           setChatMessages={setChatMessages}
           setChatLoading={setChatLoading}
           selectedTheme={selectedTheme}
+          businessMode={businessMode}
+          businessStage={businessStage}
+          startupStage={startupStage}
         />
       </>
     );
@@ -591,6 +600,9 @@ function GoalChart() {
           messagesEndRef={messagesEndRef}
           DevReset={BoundDevReset}
           selectedTheme={selectedTheme}
+          businessMode={businessMode}
+          businessStage={businessStage}
+          startupStage={startupStage}
         />
       </>
     );

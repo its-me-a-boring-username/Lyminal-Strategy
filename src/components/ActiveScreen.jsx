@@ -3,6 +3,7 @@ import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 import { ACTION_TYPES } from "../utils/actionItems.js";
 import { trackUserEvent } from "../utils/events.js";
+import { buildUserContext } from "../utils/userContext.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -46,6 +47,7 @@ export function ActiveScreen({
   setChatContext, setChatMessages, setChatLoading,
   isMobile,
   selectedTheme,
+  businessMode, businessStage, startupStage,
 }) {
   const allActive = activeGoals;
   const [celebrating, setCelebrating] = React.useState(null);
@@ -68,6 +70,7 @@ export function ActiveScreen({
     setChatMessages([introMsg]);
     setStep("chat");
     setChatLoading(true);
+    const userContext = buildUserContext(businessMode, businessStage, startupStage);
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -76,6 +79,8 @@ export function ActiveScreen({
           model: "claude-sonnet-4-20250514",
           max_tokens: 1800,
           system: `You are Lyme, a warm and focused life coach inside the Lyminal app. Your job is to help someone build a concrete action plan for a specific goal.
+
+User context: ${userContext}
 
 Context:
 - Sphere: ${ag.sphereName}

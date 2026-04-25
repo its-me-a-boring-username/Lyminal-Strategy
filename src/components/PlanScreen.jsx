@@ -4,6 +4,7 @@ import { saveChart } from "../utils/supabase.js";
 import { ACTION_TYPES, normalizeActionItems, buildForwardBody } from "../utils/actionItems.js";
 import { processInline } from "../utils/text.jsx";
 import { trackUserEvent } from "../utils/events.js";
+import { buildUserContext } from "../utils/userContext.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -490,7 +491,7 @@ function parseFindings(text) {
   } catch { return null; }
 }
 
-function FindChatModal({ items, goal, session, onClose }) {
+function FindChatModal({ items, goal, session, onClose, userContext }) {
   const [messages,        setMessages]        = useState([]);
   const [input,           setInput]           = useState("");
   const [loading,         setLoading]         = useState(false);
@@ -501,6 +502,8 @@ function FindChatModal({ items, goal, session, onClose }) {
   const itemsSummary = items.map((it, n) => `${n + 1}. ${it.text}`).join("\n");
 
   const systemPrompt = `You are Lyme, a research assistant inside the Lyminal app. The user needs help finding information or resources for specific action items related to their goal.
+
+User context: ${userContext}
 
 Sphere: ${goal.sphereName}
 Goal: ${goal.goalText}
@@ -899,6 +902,7 @@ export function PlanScreen({
   setStep, setAuthPrompt,
   setChatContext, setChatMessages, setChatLoading,
   selectedTheme,
+  businessMode, businessStage, startupStage,
 }) {
   const initialIndex = Math.max(0, activeGoals.findIndex(g => !completedGoals.has(g.goalId)));
   const [visible, setVisible] = useState(false);
@@ -917,6 +921,7 @@ export function PlanScreen({
     setChatMessages([introMsg]);
     setStep("chat");
     setChatLoading(true);
+    const userContext = buildUserContext(businessMode, businessStage, startupStage);
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -924,7 +929,7 @@ export function PlanScreen({
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
           max_tokens: 1800,
-          system: `You are Lyme, a warm and focused life coach inside the Lyminal app. Your job is to help someone build a concrete action plan for a specific goal.\n\nContext:\n- Sphere: ${ag.sphereName}\n- Goal: ${ag.goalText}\n\nOpen the conversation with a single, specific, thoughtful question that gets right to the heart of where this person stands with this goal. Do NOT use a generic opener — ask something directly relevant to the goal itself. Do NOT introduce yourself. Just ask your question directly. Keep it concise and warm.`,
+          system: `You are Lyme, a warm and focused life coach inside the Lyminal app. Your job is to help someone build a concrete action plan for a specific goal.\n\nUser context: ${userContext}\n\nContext:\n- Sphere: ${ag.sphereName}\n- Goal: ${ag.goalText}\n\nOpen the conversation with a single, specific, thoughtful question that gets right to the heart of where this person stands with this goal. Do NOT use a generic opener — ask something directly relevant to the goal itself. Do NOT introduce yourself. Just ask your question directly. Keep it concise and warm.`,
           messages: [{ role: "user", content: "Start the conversation." }],
         }),
       });
@@ -1162,7 +1167,7 @@ export function PlanScreen({
     <>
       {modal === "forward"  && <NewForwardModal  items={bulkItems} color={hc} onCommit={applyForward} onClose={closeForwardModal} />}
       {modal === "schedule" && <NewScheduleModal items={bulkItems} color={hc} session={session} onCommit={applySchedule} onClose={closeScheduleModal} />}
-      {findChatState && <FindChatModal items={findChatState.items} goal={findChatState.goal} session={session} onClose={closeFindChat} />}
+      {findChatState && <FindChatModal items={findChatState.items} goal={findChatState.goal} session={session} onClose={closeFindChat} userContext={buildUserContext(businessMode, businessStage, startupStage)} />}
       {introStep !== null && (
         <IntroModal
           step={introStep}

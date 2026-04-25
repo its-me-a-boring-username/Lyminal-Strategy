@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
+import { buildUserContext } from "../utils/userContext.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -206,6 +207,7 @@ function DetailPanel({
     }]);
     setStep("chat");
     setChatLoading(true);
+    const userContext = buildUserContext(businessMode, businessStage, startupStage);
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -214,6 +216,8 @@ function DetailPanel({
           model: "claude-sonnet-4-20250514",
           max_tokens: 1800,
           system: `You are Lyme, a warm and focused life coach inside the Lyminal app. The user is working toward a goal and wants help getting unstuck.
+
+User context: ${userContext}
 
 Context:
 - Sphere: ${activeGoal.sphereName}
@@ -396,6 +400,7 @@ export function ProgressScreen({
   setChatMessages,
   setChatLoading,
   selectedTheme,
+  businessMode, businessStage, startupStage,
 }) {
   const isDefault = selectedTheme === "warm_earth" || !selectedTheme;
   const firstActive = Math.max(0, spheres.findIndex(s => activeGoals.some(ag => ag.sphereId === s.id)));

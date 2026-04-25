@@ -4,6 +4,7 @@ import { saveChart } from "../utils/supabase.js";
 import { normalizeActionItems, ACTION_TYPE_DESCRIPTIONS } from "../utils/actionItems.js";
 import { trackUserEvent } from "../utils/events.js";
 import { processInline } from "../utils/text.jsx";
+import { buildUserContext } from "../utils/userContext.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -70,6 +71,7 @@ export function ChatScreen({
   messagesEndRef,
   DevReset,
   selectedTheme,
+  businessMode, businessStage, startupStage,
 }) {
   const isDefault = selectedTheme === "warm_earth" || !selectedTheme;
   const chatColor = (isDefault && chatContext?.sphereColor) ? chatContext.sphereColor : "var(--ly-accent)";
@@ -78,6 +80,8 @@ export function ChatScreen({
     .slice(-1)[0]?.actionItems || null;
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
+
+  const userContext = buildUserContext(businessMode, businessStage, startupStage);
 
   const sendMessage = async () => {
     if (!chatInput.trim()) return;
@@ -94,6 +98,8 @@ export function ChatScreen({
           model: "claude-sonnet-4-20250514",
           max_tokens: 1800,
           system: `You are Lyme, a warm and focused life coach inside the Lyminal app. You are helping someone build a concrete action plan for a specific goal.
+
+User context: ${userContext}
 
 Context:
 - Sphere: ${chatContext?.sphereName}
